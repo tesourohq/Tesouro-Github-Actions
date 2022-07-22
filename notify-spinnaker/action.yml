@@ -1,0 +1,40 @@
+name: Notify Spinnaker
+description: Notify Spinnaker
+inputs:
+  sem-ver:
+    description: Version of the package
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Notify Spinnaker
+      id: notify_spinnaker
+      if: github.ref == 'refs/heads/main'
+      uses: fjogeleit/http-request-action@v1
+      with:
+        url: 'https://spinnaker-api.poc-api.com/webhooks/webhook/card-processing'
+        method: 'POST'
+        data:  |
+          {
+            "artifacts": [
+              {
+                  "customKind": false,
+                  "reference": "https://github.com/tesourohq/Tesouro.Payments.Service.CardProcessing.git",
+                  "artifactAccount": "ci-tesouro",
+                  "type": "git/repo",
+                  "version": "${{ github.GITHUB_REF }}"
+              },
+              {
+                  "customKind": false,
+                  "reference": "gcr.io/tesouro-cloud/tesouro-service-card-processing:${{ inputs.sem-ver }}",
+                  "name": "gcr.io/tesouro-cloud/tesouro-service-card-processing",
+                  "artifactAccount": "docker-registry",
+                  "type": "docker/image",
+                  "version": "${{ inputs.sem-ver }}"
+              }
+            ]
+          }
+  
+    - name: Show Response
+      shell: bash
+      run: echo ${{ steps.notify_spinnaker.outputs.response }}
