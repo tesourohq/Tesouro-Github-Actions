@@ -4,6 +4,9 @@ inputs:
   sem-ver:
     description: Version of the package
     required: true
+  image-name:
+    description: Base image name to store in GCR
+    required: true
 runs:
   using: composite
   steps:
@@ -24,7 +27,7 @@ runs:
     - name: Run Integration Tests
       working-directory: ./test
       env:
-        UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/tesouro-service-card-processing${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+        UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
       shell: bash
       run: |
         # Build test container and associated services (and run tests)
