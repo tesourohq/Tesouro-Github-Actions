@@ -10,7 +10,7 @@ inputs:
   dockerfile-path:
     description: The location of the project Dockerfile
     required: true
-  base-image-name:
+  image-name:
     description: Base image name to store in GCR
     required: true
 runs:
@@ -40,7 +40,7 @@ runs:
       id: docker_meta_pr
       env:
         GCR_REGISTRY: gcr.io/tesouro-cloud
-        CONTAINER_NAME: "${{ inputs.base-image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}"
+        CONTAINER_NAME: "${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}"
       uses: docker/metadata-action@v3
       with:
         images: ${{ env.GCR_REGISTRY }}/${{ env.CONTAINER_NAME }}
