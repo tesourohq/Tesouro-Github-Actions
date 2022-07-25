@@ -7,6 +7,9 @@ inputs:
   gh-packages-token:
     description: Github packages token
     required: true
+  dockerfile-path:
+    description: The location of the project Dockerfile
+    required: true
 runs:
   using: composite
   steps:
@@ -45,7 +48,7 @@ runs:
       uses: docker/build-push-action@v2
       with:
         context: ./src
-        file: ./src/Tesouro.Payments.Service.CardProcessing/Dockerfile
+        file: ${{ inputs.dockerfile-path }}/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
         tags: ${{ steps.docker_meta_pr.outputs.tags }}
