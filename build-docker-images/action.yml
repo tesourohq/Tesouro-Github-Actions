@@ -40,7 +40,7 @@ runs:
       id: docker_meta_pr
       env:
         GCR_REGISTRY: gcr.io/tesouro-cloud
-        CONTAINER_NAME: "${{ base-container-name}}${{ github.event_name == 'pull_request' && '-ci' || '' }}"
+        CONTAINER_NAME: "${{ inputs.base-image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}"
       uses: docker/metadata-action@v3
       with:
         images: ${{ env.GCR_REGISTRY }}/${{ env.CONTAINER_NAME }}
