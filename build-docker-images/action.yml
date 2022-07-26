@@ -13,6 +13,9 @@ inputs:
   image-name:
     description: Base image name to store in GCR
     required: true
+  gcloud-service-account:
+    description: Google Cloud service account
+    required: true
 runs:
   using: composite
   steps:
@@ -21,7 +24,7 @@ runs:
       with:
         token_format: access_token
         workload_identity_provider: projects/274784588410/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc-provider
-        service_account: spinnaker-gcr-account@tesouro-cloud.iam.gserviceaccount.com
+        service_account: ${{ inputs.gcloud-service-account }}
     
     - name: Set up GCloud SDK
       uses: 'google-github-actions/setup-gcloud@v0'
