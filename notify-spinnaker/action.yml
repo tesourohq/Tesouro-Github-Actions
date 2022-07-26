@@ -28,7 +28,7 @@ runs:
             "artifacts": [
               {
                   "customKind": false,
-                  "reference": "${{ intpus.github-repo }}",
+                  "reference": "${{ inputs.github-repo }}",
                   "artifactAccount": "ci-tesouro",
                   "type": "git/repo",
                   "version": "${{ github.GITHUB_REF }}"
