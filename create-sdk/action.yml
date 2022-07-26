@@ -1,0 +1,35 @@
+name: Create SDK
+description: Create SDK
+inputs:
+  nuget-version:
+    description: NuGet version
+    required: true
+  gh-packages-token:
+    description: Github packages token
+    required: true
+  sdk-namespace:
+    description: Namespace of SDK to be generated
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: (SDK) Download Swagger File
+      uses: actions/download-artifact@v3
+      with:
+        name: swagger-file
+        path: test/tests/bin/results/updates
+
+    - name: (SDK) Install Yardarm
+      shell: bash
+      run: dotnet tool install --global --version 0.2.0-alpha005 Yardarm.CommandLine
+
+    - name: (SDK) Build
+      shell: bash
+      run: yardarm generate -i ./test/tests/bin/results/updates/swagger.json --nupkg ./dist/ -n ${{ inputs.sdk-namespace }} -v ${{ inputs.nuget-version }} -x Yardarm.SystemTextJson --repository-url https://github.com/${GITHUB_REPOSITORY}.git --repository-commit ${GITHUB_SHA} -f net6.0
+
+    - name: (SDK) Push
+      working-directory: ./dist
+      shell: bash
+      run: >-
+        dotnet nuget add source --username USERNAME --password ${{ inputs.gh-packages-token }} --store-password-in-clear-text --name github https://nuget.pkg.github.com/tesourohq/index.json
+        && dotnet nuget push **/*.${{ inputs.nuget-version }}.nupkg -k ${{ inputs.gh-packages-token }} -s github

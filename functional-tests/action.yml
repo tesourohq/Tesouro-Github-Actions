@@ -1,0 +1,51 @@
+name: Functional tests
+description: Run And Report Functional Tests
+inputs:
+  sem-ver:
+    description: Version of the package
+    required: true
+  image-name:
+    description: Base image name to store in GCR
+    required: true
+  gcloud-service-account:
+    description: Google Cloud service account
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Authorize with GCloud
+      uses: 'google-github-actions/auth@v0'
+      with:
+        token_format: access_token
+        workload_identity_provider: projects/274784588410/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc-provider
+        service_account: ${{ inputs.gcloud-service-account }}
+
+    - name: Set up GCloud SDK
+      uses: 'google-github-actions/setup-gcloud@v0'
+
+    - name: Configure GCloud for Docker
+      shell: bash
+      run: gcloud auth configure-docker -q
+
+    - name: Run Integration Tests
+      working-directory: ./test
+      env:
+        UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+      shell: bash
+      run: |
+        # Build test container and associated services (and run tests)
+        export CLOUDSDK_PYTHON=python2
+        docker-compose -f docker-compose.ci.yml -p test_job_test_1 up --exit-code-from test --force-recreate
+
+    - name: Archive swagger file
+      uses: actions/upload-artifact@v3
+      with:
+        name: swagger-file
+        path: test/tests/bin/results/swagger.json
+
+    - name: Report Integration Test Results
+      uses: dorny/test-reporter@v1
+      with:
+        name: Integration Tests
+        path: test/tests/bin/results/*.xml
+        reporter: jest-junit

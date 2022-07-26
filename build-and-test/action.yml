@@ -1,0 +1,48 @@
+name: Build and Test
+description: Build, Restore, and Test
+inputs:
+  gh-packages-token:
+    description: Github packages token
+    required: true
+  solution-file:
+    description: The solution file name with relative path
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+  
+    - name: Restore
+      working-directory: ./src
+      shell: bash
+      run: >-
+        dotnet nuget add source --username USERNAME --password ${{ inputs.gh-packages-token }} --store-password-in-clear-text --name github https://nuget.pkg.github.com/tesourohq/index.json
+        && dotnet restore ${{ inputs.solution-file }}
+
+    - name: Build
+      working-directory: ./src
+      shell: bash
+      run: dotnet build --no-restore -c Release ${{ inputs.solution-file }}
+
+    - name: Test
+      working-directory: ./src
+      shell: bash
+      run: dotnet test --no-build -c Release -l 'trx;LogFileName=${{ runner.temp }}/results.trx' ${{ inputs.solution-file }}
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Unit Tests
+        path: ${{ runner.temp }}/results.trx
+        reporter: dotnet-trx
