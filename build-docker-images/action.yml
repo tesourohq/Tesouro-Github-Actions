@@ -54,7 +54,7 @@ runs:
           # version from sem-ver
           ${{ inputs.sem-ver }}
           # push latest if we're pushing main
-          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+          type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'PAYM-1037-update-to-use-latest') }}
     
     - name: Docker Build and Push
       uses: docker/build-push-action@v2
