@@ -7,13 +7,17 @@ inputs:
   solution-file:
     description: The solution file name with relative path
     required: true
+  dotnet-version:
+    description: The version of .NET for Setup task
+    default: 6.0.x
+    required: false
 runs:
   using: composite
   steps:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: ${{ inputs.dotnet-version }}
 
     - uses: actions/cache@v2
       with:
