@@ -18,7 +18,8 @@ runs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
-
+        include-prerelease: true
+        
     - uses: actions/cache@v2
       with:
         path: ~/.nuget/packages
