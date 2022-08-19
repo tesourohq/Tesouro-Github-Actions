@@ -57,7 +57,7 @@ runs:
           type=raw,value=latest,enable={{is_default_branch}}
     
     - name: Docker Build and Push
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3
       with:
         context: ${{ inputs.docker-context }}
         file: ${{ inputs.dockerfile-path }}/Dockerfile
