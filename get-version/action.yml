@@ -12,7 +12,7 @@ outputs:
     value: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
   AssemblySemVer:
     description: Assembly Version
-    value: $${{ steps.gitversion.outputs.AssemblySemVer }}
+    value: ${{ steps.gitversion.outputs.AssemblySemVer }}
 runs:
   using: composite
   steps:
