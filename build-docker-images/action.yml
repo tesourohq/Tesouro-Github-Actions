@@ -64,4 +64,4 @@ runs:
         platforms: linux/amd64
         push: true
         tags: ${{ steps.docker_meta_pr.outputs.tags }}
-        build-args: "GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }}"
+        build-args: "GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }},ASSEMBLY_VERSION=${{inputs.sem-ver}}"
