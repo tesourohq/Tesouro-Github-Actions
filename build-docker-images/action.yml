@@ -4,6 +4,9 @@ inputs:
   sem-ver:
     description: Version of the package
     required: true
+  AssemblySemVer:
+    description: Version of the Assembly
+    required: true
   gh-packages-token:
     description: Github packages token
     required: true
@@ -66,4 +69,4 @@ runs:
         tags: ${{ steps.docker_meta_pr.outputs.tags }}
         build-args: |
           GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }}
-          ASSEMBLY_VERSION=${{ inputs.sem-ver }}
+          ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }}
