@@ -10,6 +10,9 @@ outputs:
   nuGetVersionV2:
     description: Nuget Version
     value: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
+  AssemblySemVer:
+    description: Assembly Version
+    value: ${{ steps.gitversion.outputs.AssemblySemVer }}
 runs:
   using: composite
   steps:
