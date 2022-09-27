@@ -54,7 +54,9 @@ runs:
         
     - name: Copy Coverage To Predictable Location
       shell: bash
-      run: cp --backup=t ${{ runner.temp }}/*/coverage.cobertura.xml coverage
+      run: |
+        mkdir coverage
+        cp --backup=t ${{ runner.temp }}/*/coverage.cobertura.xml coverage
               
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
