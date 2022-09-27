@@ -56,9 +56,17 @@ runs:
       shell: bash
       run: cp --backup=t ${{ runner.temp }}/*/coverage.cobertura.xml ${{ runner.temp }}
       
-    - name: print current location
+    - name: ls location
       shell: bash
-      run: pwd
+      run: ls
+
+    - name: cd location
+      shell: bash
+      run: cd ${{ runner.temp }}
+
+    - name: ls location
+      shell: bash
+      run: ls
 
     - name: List temp location
       shell: bash
