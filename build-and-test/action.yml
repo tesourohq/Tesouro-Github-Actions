@@ -42,7 +42,7 @@ runs:
     - name: Test
       working-directory: ./src
       shell: bash
-      run: dotnet test --no-build -c Release -l 'trx;LogFileName=${{ runner.temp }}/results.trx' ${{ inputs.solution-file }}
+      run: dotnet test --no-build -c Release -l 'trx;LogFileName=${{ runner.temp }}/results.trx' ${{ inputs.solution-file }} --collect:"XPlat Code Coverage" --results-directory ${{ runner.temp }}
 
     - name: Test Report
       uses: dorny/test-reporter@v1
@@ -51,3 +51,13 @@ runs:
         name: Unit Tests
         path: ${{ runner.temp }}/results.trx
         reporter: dotnet-trx
+        
+    - name: Code Coverage Summary Report
+      uses: irongut/CodeCoverageSummary@v1.0.2
+      with:
+        filename: ${{ runner.temp }}/*/coverage.cobertura.xml
+        badge: true
+        format: 'markdown'
+        output: 'both'
+        thresholds: '30 75'
+        fail_below_min: true
