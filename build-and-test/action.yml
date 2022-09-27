@@ -52,10 +52,14 @@ runs:
         path: ${{ runner.temp }}/results.trx
         reporter: dotnet-trx
         
+    - name: Copy Coverage To Predictable Location
+      shell: bash
+      run: cp ${{ runner.temp }}/**/coverage.cobertura.xml ${{ runner.temp }}/coverage.cobertura.xml
+      
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        filename: ${{ runner.temp }}/**/coverage.cobertura.xml
+        filename: ${{ runner.temp }}/coverage.cobertura.xml
         badge: true
         format: 'markdown'
         output: 'both'
