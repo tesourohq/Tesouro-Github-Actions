@@ -58,7 +58,6 @@ runs:
               
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
-      working-directory: ${{ runner.temp }}
       with:
         filename: coverage/coverage.cobertura.xml
         badge: true
