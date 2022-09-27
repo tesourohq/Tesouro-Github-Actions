@@ -59,15 +59,11 @@ runs:
     - name: List temp location
       shell: bash
       run: ls ${{ runner.temp }}
-      
-    - name: CD to temp location
-      shell: bash
-      run: cd ${{ runner.temp }}
-      
+         
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        filename: coverage.cobertura.xml
+        filename: ../../../${{ runner.temp }}/coverage.cobertura.xml
         badge: true
         format: 'markdown'
         output: 'both'
