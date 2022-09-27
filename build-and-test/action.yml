@@ -53,9 +53,9 @@ runs:
         reporter: dotnet-trx
         
     - name: Code Coverage Summary Report
-      uses: irongut/CodeCoverageSummary@v1.0.2
+      uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        filename: ${{ runner.temp }}/**/coverage.cobertura.xml
+        filename: ${{ runner.temp }}/*/coverage.cobertura.xml
         badge: true
         format: 'markdown'
         output: 'both'
