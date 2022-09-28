@@ -85,7 +85,7 @@ runs:
       with:
         reports: coverage/*
         targetdir: ${{ runner.temp }}
-        reporttypes: Html
+        reporttypes: Html;HtmlSummary;MarkdownSummary
         customSettings: riskHotspotsAnalysisThresholds:metricThresholdForCrapScore=45
         
     - name: Add Coverage Report Comment
@@ -94,4 +94,18 @@ runs:
       with:
         recreate: true
         path: ${{ runner.temp }}/index.html
+        
+    - name: Add Coverage MD Report Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: ${{ runner.temp }}/Summary.md
+        
+    - name: Add Coverage HTML Report Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: ${{ runner.temp }}/summary.html
         
