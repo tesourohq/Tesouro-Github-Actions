@@ -80,6 +80,10 @@ runs:
         recreate: true
         path: code-coverage-results.md
         
+    - name: ls current location
+      shell: bash
+      run: ls
+        
     - name: Add Coverage Report
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.10
       with:
