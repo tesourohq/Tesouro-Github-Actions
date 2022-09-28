@@ -11,6 +11,10 @@ inputs:
     description: The version of .NET for Setup task
     default: 6.0.*
     required: false
+  code-coverage:
+    description: The code coverage lower and upper threshold percentages for badge and health indicators
+    default: '40 90'
+    required: false
 runs:
   using: composite
   steps:
@@ -65,7 +69,8 @@ runs:
         badge: true
         format: 'markdown'
         output: 'both'
-        thresholds: '30 75'
+        indicators: true
+        thresholds: ${{ inputs.code-coverage }}
         fail_below_min: true
         
     - name: Add Coverage PR Comment
@@ -74,3 +79,17 @@ runs:
       with:
         recreate: true
         path: code-coverage-results.md
+        
+    - name: Add Coverage Report
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.10
+      with:
+        reports: coverage/*
+        targetdir: ${{ runner.temp }}
+        reporttypes: Html
+        customSettings: riskHotspotsAnalysisThresholds:metricThresholdForCrapScore=45
+      
+    - name: Upload coverage report artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: CoverageReport # Artifact name        
+        path: ${{ runner.temp }}
