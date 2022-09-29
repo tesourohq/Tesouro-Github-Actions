@@ -47,7 +47,7 @@ runs:
     
     - name: Update Project Assembly Version Number.
       shell: bash
-      run: find . -type f -name '*.csproj' | xargs sed -i 's/\(<AssemblyVersion>\([0-9]\+\.\)\{2\}\)\([0-9]\+\)/\1${{inputs.AssemblySemVer}}/'
+      run: find . -type f -name '*.csproj' | xargs sed -i 's/\(<AssemblyVersion>\)\([0-9\.]*\)\(<\/AssemblyVersion>\)/\2${{inputs.AssemblySemVer}}/'
 
     - name: Docker Meta
       id: docker_meta_pr
