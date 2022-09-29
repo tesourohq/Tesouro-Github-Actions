@@ -93,7 +93,7 @@ runs:
   
     - name: Add Coverage MD Report Summary
       shell: bash
-      run: ${{ runner.temp }}/Summary.md >> $GITHUB_STEP_SUMMARY
-        
+      run: echo ${{ runner.temp }}/Summary.md >> $GITHUB_STEP_SUMMARY
+      
 
         
