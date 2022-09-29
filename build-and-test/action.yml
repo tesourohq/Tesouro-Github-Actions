@@ -13,7 +13,7 @@ inputs:
     required: false
   code-coverage:
     description: The code coverage lower and upper threshold percentages for badge and health indicators
-    default: '40 90'
+    default: '90 95'
     required: false
 runs:
   using: composite
@@ -56,7 +56,8 @@ runs:
         path: ${{ runner.temp }}/results.trx
         reporter: dotnet-trx
            
-       
+      # gets all output files from Coverlet (one per test project) and combines into a single file
+      # creates a Markdown file with coverage per class
     - name: Add Coverage Report
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.10
       with:
@@ -68,11 +69,12 @@ runs:
       shell: bash
       run: cat ${{ runner.temp }}/Summary.md >> $GITHUB_STEP_SUMMARY
       
+      # the CodeCoverageSummary step only reads from the current directory, so must move the input
     - name: Copy Coverage To Predictable Location
       shell: bash
       run: |
         mkdir coverage
-        cp --backup=t ${{ runner.temp }}/Cobertura.xml coverage
+        cp ${{ runner.temp }}/Cobertura.xml coverage
 
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
