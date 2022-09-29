@@ -11,6 +11,10 @@ inputs:
     description: The version of .NET for Setup task
     default: 6.0.*
     required: false
+  code-coverage:
+    description: The code coverage lower and upper threshold percentages for badge and health indicators
+    default: '90 95'
+    required: false
 runs:
   using: composite
   steps:
@@ -42,7 +46,7 @@ runs:
     - name: Test
       working-directory: ./src
       shell: bash
-      run: dotnet test --no-build -c Release -l 'trx;LogFileName=${{ runner.temp }}/results.trx' ${{ inputs.solution-file }}
+      run: dotnet test --no-build -c Release -l 'trx;LogFileName=${{ runner.temp }}/results.trx' ${{ inputs.solution-file }} --collect:"XPlat Code Coverage" --results-directory ${{ runner.temp }}
 
     - name: Test Report
       uses: dorny/test-reporter@v1
@@ -51,3 +55,43 @@ runs:
         name: Unit Tests
         path: ${{ runner.temp }}/results.trx
         reporter: dotnet-trx
+           
+      # gets all output files from Coverlet (one per test project) and combines into a single file
+      # creates a Markdown file with coverage per class
+    - name: Add Coverage Report
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.10
+      with:
+        reports: ${{ runner.temp }}/*/coverage.cobertura.xml
+        targetdir: ${{ runner.temp }}
+        reporttypes: Cobertura;MarkdownSummary
+  
+    - name: Add Coverage MD Report Summary
+      shell: bash
+      run: cat ${{ runner.temp }}/Summary.md >> $GITHUB_STEP_SUMMARY
+      
+      # the CodeCoverageSummary step only reads from the current directory, so must move the input
+    - name: Copy Coverage To Predictable Location
+      shell: bash
+      run: |
+        mkdir coverage
+        cp ${{ runner.temp }}/Cobertura.xml coverage
+
+    - name: Code Coverage Summary Report
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      with:
+        filename: coverage/*
+        badge: true
+        format: 'markdown'
+        output: 'both'
+        indicators: true
+        thresholds: ${{ inputs.code-coverage }}
+        fail_below_min: true
+
+    - name: Add Coverage PR Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request' && always()
+      with:
+        recreate: true
+        path: code-coverage-results.md
+
+        
