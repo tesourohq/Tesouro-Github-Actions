@@ -45,6 +45,10 @@ runs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     
+    - name: Update Project Assembly Version Number.
+      shell: bash
+      run: sed -i "s/\(<AssemblyVersion>\([0-9]\+\.\)\{2\}\)\([0-9]\+\)/\1${{inputs.AssemblySemVer}}/" **/**.csproj
+
     - name: Docker Meta
       id: docker_meta_pr
       env:
@@ -69,4 +73,3 @@ runs:
         tags: ${{ steps.docker_meta_pr.outputs.tags }}
         build-args: |
           GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }}
-          ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }}
