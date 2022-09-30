@@ -31,6 +31,13 @@ runs:
         restore-keys: |
           ${{ runner.os }}-nuget-
   
+    - name: Remove Source If Exists
+      working-directory: ./src
+      shell: bash  
+      run: >- 
+        dotnet nuget remove source github
+        && exit 0
+
     - name: Restore
       working-directory: ./src
       shell: bash
