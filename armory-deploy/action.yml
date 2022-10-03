@@ -1,0 +1,59 @@
+name: Armory Deploy 
+description: Deploy using Armory CDaaS 
+outputs:
+  ArmoryURL:
+    description: URL for Armory UI, to track the deployment. 
+    value: ${{ steps.armory-deploy.outputs.deployment-link }}
+inputs:
+  armory-client-id:
+    description: Client ID, configured in the Armory account being used.
+    required: true
+  armory-client-secret:
+    description: Client Secret, corresponding to the Client ID.
+    required: true
+  armory-yaml-path:
+    description: Path to the armory-deployment.yaml file.
+    required: true
+  prod-manifest-path:
+    description: Location where Kustomize should output the prod manifests. This path is used in the armory-deployment.yaml.
+    required: true
+  stage-manifest-path:
+    description: (Optional) Location where Kustomize should output the stage manifests. This path is used in the armory-deployment.yaml. Step is skipped if not provided.
+    required: false
+  major-minor-patch:
+    description: SemVer, with nothing other than 'major.minor.patch'.
+runs:
+  using: composite
+  steps:
+    - name: Setup Kustomize
+      shell: bash
+      working-directory: deployment/kustomize/base
+      run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+
+    - name: Update Version Label
+      shell: bash
+      working-directory: deployment/kustomize/base
+      run: kustomize edit set label version:${{ inputs.major-minor-patch }}
+
+    - name: Bake Stage Manifests
+      if: inputs.stage-manifest-path != ''
+      shell: bash
+      working-directory: deployment/kustomize/overlays/stage
+      run: kustomize build . -o ${{ inputs.stage-manifest-path }}
+
+    - name: Bake Prod Manifests
+      shell: bash
+      working-directory: deployment/kustomize/overlays/prod
+      run: kustomize build . -o ${{ inputs.prod-manifest-path }}
+
+      # https://docs.armory.io/cd-as-a-service/setup/gh-action/
+    - name: Deploy
+      id: armory-deploy
+      uses: armory/cli-deploy-action@v1.0.0
+      env:
+        PROD_MANIFEST_PATH: ${{ inputs.prod-manifest-path }}
+        STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-path }}  # Note: The deployment-armory.yaml must conditionally execute the Stage deployment, or disregard it, since it is optional here.
+      with:
+        clientId: ${{ inputs.armory-client-id }}
+        clientSecret: ${{ inputs.armory-client-secret }}
+        path-to-file: ${{ inputs.armory-yaml-path }}

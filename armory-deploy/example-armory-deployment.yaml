@@ -1,0 +1,48 @@
+version: v1
+kind: kubernetes
+application: reporting # The name of the application to deploy. This is semantic: It matters for controlling concurrent deployments. Also used for pricing.
+deploymentConfig:
+  timeout: # Optional. Sets a timeout for rolling back deployments that do not reach a READY state. Applies to all deployments in this file. Must be equal to or greater than 1 minute
+    duration: 900
+    unit: SECONDS
+targets:
+  stage:
+    account: payments-cloud-stage
+    namespace: service
+    strategy: full-deployment
+  prod:
+    account: payments-cloud-us-east-1 # The name that you assigned to the deployment target cluster when you installed the RNA.
+    namespace: service # Set the namespace that the app gets deployed to. Overrides the namespaces that are in your manifests. For now, needs to target single space, as the fallback to default is forthcoming.
+    strategy: canary-25 # A named strategy from the strategies block. This example uses the name canary-25.
+    constraints:
+      beforeDeployment:
+        - pause: # The step type
+            # The duration of the pause before the deployment continues. If duration is not zero, set untilApproved to false.
+            #   duration: 1
+            #   unit: SECONDS
+            untilApproved: true  # If set to true, the deployment waits until a manual approval to continue. Only set this to true if duration and unit are not set. 
+      afterDeployment: []
+      # Defines the deployment targets that must reach a successful state (defined as status == SUCCEEDED) before this deployment can start. Deployments with the same dependsOn criteria will execute in parallel.
+      dependsOn: [stage]
+manifests: # The list of manifest sources. Can be a directory or file. 
+  - path: $STAGE_MANIFEST_PATH
+    targets:
+      - stage
+  - path: $PROD_MANIFEST_PATH # Reads all yaml|yml files in the directory and deploy all the manifests found.
+    targets:
+      - prod
+strategies: # A map of named strategies that can be assigned to deployment targets in the targets block.
+  full-deploy:
+    canary:
+      steps:
+        - setWeight:
+            weight: 100
+  canary-25: # Name for a strategy that you use to refer to it. Used in the target block. This example uses canary-25 as the name.
+    canary: # The deployment strategy type. Can be "canary" or "blueGreen"
+      # The steps for your deployment strategy.
+      steps:
+        - setWeight:
+            # The percentage of pods that should be running the canary version for this step. Set it to an integer between 0 and 100, inclusive.
+            weight: 25
+        - pause:
+            untilApproved: true
