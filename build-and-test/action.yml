@@ -35,7 +35,7 @@ runs:
       working-directory: ./src
       shell: bash
       run: >-
-        dotnet nuget add source --username USERNAME --password ${{ inputs.gh-packages-token }} --store-password-in-clear-text --name github https://nuget.pkg.github.com/tesourohq/index.json
+        dotnet nuget add source --username USERNAME --password ${{ inputs.gh-packages-token }} --store-password-in-clear-text --name github https://nuget.pkg.github.com/tesourohq/index.json || true
         && dotnet restore ${{ inputs.solution-file }}
 
     - name: Build
