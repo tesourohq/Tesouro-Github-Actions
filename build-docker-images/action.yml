@@ -22,6 +22,13 @@ inputs:
   docker-context:
     description: The context folder where the image is built
     required: true
+outputs:
+  SemVer:
+    description: Semantic Version
+    value: ${{ steps.gitversion.outputs.SemVer }}
+  PushedImage:
+    description: Image name:tag that was pushed to GCR.
+    value: "gcr.io/tesouro-cloud/${{ inputs.image-name }}:${{ inputs.sem-ver }}"
 runs:
   using: composite
   steps:
