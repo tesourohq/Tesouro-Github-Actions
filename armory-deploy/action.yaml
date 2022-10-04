@@ -14,14 +14,15 @@ inputs:
   armory-yaml-path:
     description: Path to the armory-deployment.yaml file.
     required: true
-  prod-manifest-path:
+  prod-manifest-output-path:
     description: Location where Kustomize should output the prod manifests. This path is used in the armory-deployment.yaml.
     required: true
-  stage-manifest-path:
+  stage-manifest-output-path:
     description: (Optional) Location where Kustomize should output the stage manifests. This path is used in the armory-deployment.yaml. Step is skipped if not provided.
     required: false
   major-minor-patch:
     description: SemVer, with nothing other than 'major.minor.patch'.
+    required: true
 runs:
   using: composite
   steps:
