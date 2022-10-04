@@ -1,3 +1,6 @@
+# This example deployment configuration waits for the deploy to stage to fully succeed, then pauses for manual approval before deploying to prod. The deploy to prod uses the pod-ratio method
+# to come as close to 25% as possible, then pauses for manual confirmation before progressing to 100% and concluding.
+
 version: v1
 kind: kubernetes
 application: reporting # The name of the application to deploy. This is semantic: It matters for controlling concurrent deployments. Also used for pricing.
@@ -18,9 +21,9 @@ targets:
       beforeDeployment:
         - pause: # The step type
             # The duration of the pause before the deployment continues. If duration is not zero, set untilApproved to false.
-            #   duration: 1
-            #   unit: SECONDS
-            untilApproved: true  # If set to true, the deployment waits until a manual approval to continue. Only set this to true if duration and unit are not set. 
+              duration: 0
+              unit: SECONDS
+        - untilApproved: true  # If set to true, the deployment waits until a manual approval to continue. Only set this to true if duration and unit are not set. 
       afterDeployment: []
       # Defines the deployment targets that must reach a successful state (defined as status == SUCCEEDED) before this deployment can start. Deployments with the same dependsOn criteria will execute in parallel.
       dependsOn: [stage]

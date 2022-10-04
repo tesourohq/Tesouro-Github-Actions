@@ -52,7 +52,7 @@ runs:
       uses: armory/cli-deploy-action@v1.0.0
       env:
         PROD_MANIFEST_PATH: ${{ inputs.prod-manifest-path }}
-        STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-path }}  # Note: The deployment-armory.yaml must conditionally execute the Stage deployment, or disregard it, since it is optional here.
+        STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-path }}  # Note: The armory-deployment.yaml can safely disregard this env var, if not using it as part of the deployment strategy.
       with:
         clientId: ${{ inputs.armory-client-id }}
         clientSecret: ${{ inputs.armory-client-secret }}
