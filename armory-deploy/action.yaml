@@ -50,6 +50,7 @@ runs:
     - name: Deploy
       id: armory-deploy
       uses: armory/cli-deploy-action@v1.0.0
+      if: github.ref == 'refs/heads/main'  # ONLY deploy on merge to main.
       env:
         PROD_MANIFEST_PATH: ${{ inputs.prod-manifest-path }}
         STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-path }}  # Note: The armory-deployment.yaml can safely disregard this env var, if not using it as part of the deployment strategy.
