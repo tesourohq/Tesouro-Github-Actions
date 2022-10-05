@@ -24,7 +24,6 @@ inputs:
     required: true
   platform:
     description: The platform to target for the build
-    required: true
     default: linux/amd64
 runs:
   using: composite
