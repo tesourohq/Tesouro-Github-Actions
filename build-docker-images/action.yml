@@ -69,6 +69,8 @@ runs:
           ${{ inputs.sem-ver }}
           # push latest if we're pushing main
           type=raw,value=latest,enable={{is_default_branch}}
+          # push platform as well
+          ${{ inputs.platform }}
     
     - name: Docker Build and Push
       uses: docker/build-push-action@v3
