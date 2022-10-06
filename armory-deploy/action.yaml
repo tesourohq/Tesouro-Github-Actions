@@ -48,7 +48,7 @@ runs:
     - name: Bake Prod Manifests
       shell: bash
       working-directory: deployment/kustomize/overlays/prod
-      run: kustomize build . -o ${{ inputs.prod-manifest-output-path }}
+      run: pwd && ls -la && kustomize build . -o ${{ inputs.prod-manifest-output-path }}
 
       # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
