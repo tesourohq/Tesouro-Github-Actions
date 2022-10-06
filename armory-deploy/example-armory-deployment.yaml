@@ -31,7 +31,7 @@ manifests: # The list of manifest sources. Can be a directory or file.
   - path: $STAGE_MANIFEST_PATH
     targets:
       - stage
-  - path: $PROD_MANIFEST_PATH # Reads all yaml|yml files in the directory and deploy all the manifests found.
+  - path: $PROD_MANIFEST_PATH # Reads all yaml|yml files in the directory and deploy all the manifests found. Starts at project root (or working dir if set)
     targets:
       - prod
 strategies: # A map of named strategies that can be assigned to deployment targets in the targets block.
