@@ -17,14 +17,8 @@ inputs:
   prod-kustomize-path:
     description: Path from the project root to the production kustomize overlay.
     required: true
-  prod-manifest-output-path:
-    description: Location where Kustomize should output the prod manifests. This path is used in the armory-deployment.yaml.
-    required: true
   stage-kustomize-path:
     description: (Optional) Path from the project root to the stage kustomize overlay.
-    required: false
-  stage-manifest-output-path:
-    description: (Optional) Location where Kustomize should output the stage manifests. This path is used in the armory-deployment.yaml. Step is skipped if not provided.
     required: false
   major-minor-patch:
     description: SemVer, with nothing other than 'major.minor.patch'.
@@ -46,21 +40,18 @@ runs:
       run: kustomize edit set label version:${{ inputs.major-minor-patch }} && kustomize edit set image gcr.io/tesouro-cloud/tesouro-service-reporting:${{ inputs.image-tag }}
 
     - name: Bake Stage Manifests
-      if: inputs.stage-kustomize-path != '' && inputs.stage-manifest-output-path != '' # Only run if the paths are provided, otherwise assume no stage environment is being used.
+      if: inputs.stage-kustomize-path != '' # Only run if the path is provided, otherwise assume no stage environment is being used.
       shell: bash
-      run: kustomize build ${{ inputs.stage-kustomize-path }} -o ${{ inputs.stage-manifest-output-path }}
+      run: kustomize build ${{ inputs.stage-kustomize-path }} -o stage-manifests.yaml  # As with prod below, this requires the armory-deployment.yaml to look in the project root for the manifest, at this name.
 
     - name: Bake Prod Manifests
       shell: bash
-      run: kustomize build ${{ inputs.prod-kustomize-path }} -o ${{ inputs.prod-manifest-output-path }}
+      run: kustomize build ${{ inputs.prod-kustomize-path }} -o prod-manifests.yaml
 
       # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
       id: armory-deploy
       uses: armory/cli-deploy-action@v1.0.0
-      env:
-        PROD_MANIFEST_PATH: ${{ inputs.prod-manifest-output-path }}
-        STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-output-path }}
       with:
         clientId: ${{ inputs.armory-client-id }}
         clientSecret: ${{ inputs.armory-client-secret }}
