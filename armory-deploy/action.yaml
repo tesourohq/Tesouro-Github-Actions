@@ -14,9 +14,15 @@ inputs:
   armory-yaml-path:
     description: Path to the armory-deployment.yaml file.
     required: true
+  prod-kustomize-path:
+    description: Path from the project root to the production kustomize overlay.
+    required: true
   prod-manifest-output-path:
     description: Location where Kustomize should output the prod manifests. This path is used in the armory-deployment.yaml.
     required: true
+  stage-kustomize-path:
+    description: (Optional) Path from the project root to the stage kustomize overlay.
+    required: false
   stage-manifest-output-path:
     description: (Optional) Location where Kustomize should output the stage manifests. This path is used in the armory-deployment.yaml. Step is skipped if not provided.
     required: false
@@ -40,15 +46,15 @@ runs:
       run: kustomize edit set label version:${{ inputs.major-minor-patch }} && kustomize edit set image gcr.io/tesouro-cloud/tesouro-service-reporting:${{ inputs.image-tag }}
 
     - name: Bake Stage Manifests
-      if: inputs.stage-manifest-path != ''
+      if: inputs.stage-kustomize-path != '' && inputs.stage-manifest-output-path != ''  # Only run if the paths are provided, otherwise assume no stage environment is being used.
       shell: bash
-      working-directory: deployment/kustomize/overlays/stage
-      run: kustomize build . -o ${{ inputs.stage-manifest-output-path }}
+      # working-directory: deployment/kustomize/overlays/stage
+      run: kustomize build ${{ inputs.stage-kustomize-path }} -o ${{ inputs.stage-manifest-output-path }}
 
     - name: Bake Prod Manifests
       shell: bash
-      working-directory: deployment/kustomize/overlays/prod
-      run: pwd && ls -la && kustomize build . -o ${{ inputs.prod-manifest-output-path }}
+      # working-directory: deployment/kustomize/overlays/prod
+      run: kustomize build ${{ inputs.prod-kustomize-path }} -o ${{ inputs.prod-manifest-output-path }}
 
       # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
@@ -56,9 +62,15 @@ runs:
       uses: armory/cli-deploy-action@v1.0.0
       if: github.ref == 'refs/heads/main'  # ONLY deploy on merge to main.
       env:
-        PROD_MANIFEST_PATH: ${{ inputs.prod-manifest-path }}
-        STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-path }}  # Note: The armory-deployment.yaml can safely disregard this env var, if not using it as part of the deployment strategy.
+        PROD_MANIFEST_PATH: ${{ inputs.prod-manifest-output-path }}
+        STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-output-path }}
       with:
         clientId: ${{ inputs.armory-client-id }}
         clientSecret: ${{ inputs.armory-client-secret }}
         path-to-file: ${{ inputs.armory-yaml-path }}
+    
+    - name: Update Summary
+      env:
+        URL: ${{ steps.armory-deploy.outputs.deployment-link }}
+      shell: bash
+      run: "echo 'Deployment URL: $URL' >> $GITHUB_STEP_SUMMARY"
