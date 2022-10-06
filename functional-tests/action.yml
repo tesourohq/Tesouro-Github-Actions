@@ -35,7 +35,7 @@ runs:
       run: |
         # Build test container and associated services (and run tests)
         export CLOUDSDK_PYTHON=python2
-        docker-compose -f docker-compose.ci.yml -p test_job_test_1 up --exit-code-from test --force-recreate
+        docker-compose -f docker-compose.ci.yml -p test_job_test_1 up --exit-code-from test --force-recreate --verbose
 
     - name: Archive swagger file
       uses: actions/upload-artifact@v3
