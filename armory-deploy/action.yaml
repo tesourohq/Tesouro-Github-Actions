@@ -69,8 +69,6 @@ runs:
         clientSecret: ${{ inputs.armory-client-secret }}
         path-to-file: ${{ inputs.armory-yaml-path }}
     
-    - name: Update Summary
-      env:
-        URL: ${{ steps.armory-deploy.outputs.deployment-link }}
+    - name: Update Summary with Deployment link
       shell: bash
-      run: "echo 'Deployment URL: $URL' >> $GITHUB_STEP_SUMMARY"
+      run: "echo 'Deployment URL: ${{ steps.armory-deploy.outputs.deployment-link }}' >> $GITHUB_STEP_SUMMARY"
