@@ -58,7 +58,6 @@ runs:
     - name: Deploy
       id: armory-deploy
       uses: armory/cli-deploy-action@v1.0.0
-      if: github.ref == 'refs/heads/main' # ONLY deploy on merge to main.
       env:
         PROD_MANIFEST_PATH: ${{ inputs.prod-manifest-output-path }}
         STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-output-path }}
