@@ -1,9 +1,5 @@
 name: Armory Deploy
 description: Deploy using Armory CDaaS
-outputs:
-  ArmoryURL:
-    description: URL for Armory UI, to track the deployment.
-    value: ${{ steps.armory-deploy.outputs.deployment-link }}
 inputs:
   armory-client-id:
     description: Client ID, configured in the Armory account being used.
@@ -56,3 +52,7 @@ runs:
         clientId: ${{ inputs.armory-client-id }}
         clientSecret: ${{ inputs.armory-client-secret }}
         path-to-file: ${{ inputs.armory-yaml-path }}
+    
+    - name: Update Summary with Deployment link
+      shell: bash
+      run: "echo ':rocket: Deployment URL: ${{ steps.armory-deploy.outputs.deployment-link }}' >> $GITHUB_STEP_SUMMARY"
