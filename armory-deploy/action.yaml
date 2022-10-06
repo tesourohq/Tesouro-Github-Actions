@@ -43,12 +43,12 @@ runs:
       if: inputs.stage-manifest-path != ''
       shell: bash
       working-directory: deployment/kustomize/overlays/stage
-      run: kustomize build . -o ${{ inputs.stage-manifest-path }}
+      run: kustomize build . -o ${{ inputs.stage-manifest-output-path }}
 
     - name: Bake Prod Manifests
       shell: bash
       working-directory: deployment/kustomize/overlays/prod
-      run: kustomize build . -o ${{ inputs.prod-manifest-path }}
+      run: kustomize build . -o ${{ inputs.prod-manifest-output-path }}
 
       # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
