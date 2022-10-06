@@ -1,8 +1,8 @@
-name: Armory Deploy 
-description: Deploy using Armory CDaaS 
+name: Armory Deploy
+description: Deploy using Armory CDaaS
 outputs:
   ArmoryURL:
-    description: URL for Armory UI, to track the deployment. 
+    description: URL for Armory UI, to track the deployment.
     value: ${{ steps.armory-deploy.outputs.deployment-link }}
 inputs:
   armory-client-id:
@@ -46,21 +46,19 @@ runs:
       run: kustomize edit set label version:${{ inputs.major-minor-patch }} && kustomize edit set image gcr.io/tesouro-cloud/tesouro-service-reporting:${{ inputs.image-tag }}
 
     - name: Bake Stage Manifests
-      if: inputs.stage-kustomize-path != '' && inputs.stage-manifest-output-path != ''  # Only run if the paths are provided, otherwise assume no stage environment is being used.
+      if: inputs.stage-kustomize-path != '' && inputs.stage-manifest-output-path != '' # Only run if the paths are provided, otherwise assume no stage environment is being used.
       shell: bash
-      # working-directory: deployment/kustomize/overlays/stage
       run: kustomize build ${{ inputs.stage-kustomize-path }} -o ${{ inputs.stage-manifest-output-path }}
 
     - name: Bake Prod Manifests
       shell: bash
-      # working-directory: deployment/kustomize/overlays/prod
       run: kustomize build ${{ inputs.prod-kustomize-path }} -o ${{ inputs.prod-manifest-output-path }}
 
       # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
       id: armory-deploy
       uses: armory/cli-deploy-action@v1.0.0
-      if: github.ref == 'refs/heads/main'  # ONLY deploy on merge to main.
+      if: github.ref == 'refs/heads/main' # ONLY deploy on merge to main.
       env:
         PROD_MANIFEST_PATH: ${{ inputs.prod-manifest-output-path }}
         STAGE_MANIFEST_PATH: ${{ inputs.stage-manifest-output-path }}
@@ -68,7 +66,3 @@ runs:
         clientId: ${{ inputs.armory-client-id }}
         clientSecret: ${{ inputs.armory-client-secret }}
         path-to-file: ${{ inputs.armory-yaml-path }}
-
-    # - name: Update Summary with Deployment link
-    #   shell: bash
-    #   run: "echo ':rocket: Deployment URL: ${{ steps.armory-deploy.outputs.deployment-link }} \n$GITHUB_STEP_SUMMARY' > $GITHUB_STEP_SUMMARY"
