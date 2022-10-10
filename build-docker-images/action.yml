@@ -25,10 +25,6 @@ inputs:
   platform:
     description: The platform to target for the build
     default: linux/amd64
-outputs:
-  SemVer:
-    description: Semantic Version
-    value: ${{ steps.gitversion.outputs.SemVer }}
 runs:
   using: composite
   steps:
