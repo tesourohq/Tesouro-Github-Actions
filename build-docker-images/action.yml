@@ -22,6 +22,9 @@ inputs:
   docker-context:
     description: The context folder where the image is built
     required: true
+  platform:
+    description: The platform to target for the build
+    default: linux/amd64
 outputs:
   SemVer:
     description: Semantic Version
@@ -68,7 +71,7 @@ runs:
       with:
         context: ${{ inputs.docker-context }}
         file: ${{ inputs.dockerfile-path }}/Dockerfile
-        platforms: linux/amd64
+        platforms: ${{ inputs.platform }}
         push: true
         tags: ${{ steps.docker_meta_pr.outputs.tags }}
         build-args: |
