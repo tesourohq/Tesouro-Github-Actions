@@ -23,7 +23,8 @@ targets:
             # The duration of the pause before the deployment continues. If duration is not zero, set untilApproved to false.
               duration: 0
               unit: SECONDS
-        - untilApproved: true  # If set to true, the deployment waits until a manual approval to continue. Only set this to true if duration and unit are not set. 
+        # - pause:
+        #     untilApproved: false # If set to true, the deployment waits until a manual approval to continue. Only set this to true if duration and unit are not set.
       afterDeployment: []
       # Defines the deployment targets that must reach a successful state (defined as status == SUCCEEDED) before this deployment can start. Deployments with the same dependsOn criteria will execute in parallel.
       dependsOn: [stage]
