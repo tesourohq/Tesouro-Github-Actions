@@ -21,14 +21,14 @@ targets:
       beforeDeployment:
         - pause: # The step type
             # The duration of the pause before the deployment continues. If duration is not zero, set untilApproved to false.
-              duration: 0
-              unit: SECONDS
+            duration: 0
+            unit: SECONDS
         # - pause:
         #     untilApproved: false # If set to true, the deployment waits until a manual approval to continue. Only set this to true if duration and unit are not set.
       afterDeployment: [] # TODO: Either here or in beforeDeployment, implement webhooks for external dependencies/integrations: https://docs.armory.io/cd-as-a-service/tasks/webhook-approval/
       # Defines the deployment targets that must reach a successful state (defined as status == SUCCEEDED) before this deployment can start. Deployments with the same dependsOn criteria will execute in parallel.
       dependsOn: [stage]
-manifests: # The list of manifest sources. Can be a directory or file. 
+manifests: # The list of manifest sources. Can be a directory or file.
   - path: $STAGE_MANIFEST_PATH
     targets:
       - stage
