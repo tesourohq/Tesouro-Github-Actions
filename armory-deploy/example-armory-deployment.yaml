@@ -9,34 +9,34 @@ deploymentConfig:
     duration: 900
     unit: SECONDS
 targets:
-  stage:
-    account: payments-cloud-stage
-    namespace: service
-    strategy: full-deployment
+  # stage:
+  #   account: payments-cloud-stage
+  #   namespace: service
+  #   strategy: full-deployment
   prod:
     account: payments-cloud-us-east-1 # The name that you assigned to the deployment target cluster when you installed the RNA.
     namespace: service # Set the namespace that the app gets deployed to. Overrides the namespaces that are in your manifests. For now, needs to target single space, as the fallback to default is forthcoming.
-    strategy: canary-25 # A named strategy from the strategies block. This example uses the name canary-25.
+    strategy: full-deployment # A named strategy from the strategies block. This example uses the name canary-25.
     constraints:
-      beforeDeployment:
-        - pause: # The step type
-            # The duration of the pause before the deployment continues. If duration is not zero, set untilApproved to false.
-            duration: 0
-            unit: SECONDS
+      beforeDeployment: []
+        # - pause: # The step type
+        #     # The duration of the pause before the deployment continues. If duration is not zero, set untilApproved to false.
+        #     duration: 0
+        #     unit: SECONDS
         # - pause:
         #     untilApproved: false # If set to true, the deployment waits until a manual approval to continue. Only set this to true if duration and unit are not set.
-      afterDeployment: [] # TODO: Either here or in beforeDeployment, implement webhooks for external dependencies/integrations: https://docs.armory.io/cd-as-a-service/tasks/webhook-approval/
+      afterDeployment: []
       # Defines the deployment targets that must reach a successful state (defined as status == SUCCEEDED) before this deployment can start. Deployments with the same dependsOn criteria will execute in parallel.
-      dependsOn: [stage]
+      dependsOn: [] # TODO: Add stage here when it is ready.
 manifests: # The list of manifest sources. Can be a directory or file.
-  - path: $STAGE_MANIFEST_PATH
-    targets:
-      - stage
-  - path: $PROD_MANIFEST_PATH # Reads all yaml|yml files in the directory and deploy all the manifests found. Starts at project root (or working dir if set)
+  # - path: ./stage-manifests.yaml
+  #   targets:
+  #     - stage
+  - path: ./prod-manifests.yaml # Reads all yaml|yml files in the directory and deploy all the manifests found.
     targets:
       - prod
 strategies: # A map of named strategies that can be assigned to deployment targets in the targets block.
-  full-deploy:
+  full-deployment:
     canary:
       steps:
         - setWeight:
@@ -48,5 +48,5 @@ strategies: # A map of named strategies that can be assigned to deployment targe
         - setWeight:
             # The percentage of pods that should be running the canary version for this step. Set it to an integer between 0 and 100, inclusive.
             weight: 25
-        - pause:
-            untilApproved: true
+        # - pause:
+        #     untilApproved: true  # TODO: This stategy should call the integration tests, wait for success/fail, then proceed/rollback based on that. We won't pause here for manual approval, ever.
