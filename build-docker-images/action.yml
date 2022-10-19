@@ -24,7 +24,7 @@ inputs:
     required: true
   platform:
     description: The platform to target for the build
-    default: linux/amd64
+    default: linux/arm64
 runs:
   using: composite
   steps:
@@ -56,7 +56,7 @@ runs:
       shell: bash
       run: |
         docker buildx build ${{ inputs.docker-context }} -f ${{ inputs.dockerfile-path }}/Dockerfile \
-        --build-arg GH_PACKAGES_TOKEN=${{ secrets.GH_PACKAGES_TOKEN }} --build-arg ASSEMBLY_VERSION=${{ needs.ci-get-version.outputs.AssemblySemVer }} \
-        --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ needs.ci-get-version.outputs.SemVer }} \
+        --build-arg GH_PACKAGES_TOKEN=${{ secrets.GH_PACKAGES_TOKEN }} --build-arg ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }} \
+        --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }} \
         --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest \
         --push --platform ${{ inputs.platform }}
