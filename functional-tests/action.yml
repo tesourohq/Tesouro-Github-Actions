@@ -34,7 +34,7 @@ runs:
     - name: Start Integration Tests
       working-directory: ./test
       env:
-        UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ needs.ci-get-version.outputs.SemVer }}"
+        UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
       shell: bash
       run: |
         # Build test container and associated services (and run tests)
