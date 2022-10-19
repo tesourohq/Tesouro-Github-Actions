@@ -54,9 +54,4 @@ runs:
     # we'll run our own command for now, but as GitHub Actions releases arm runners (and actions add support), we could switch back
     - name: Build Arm Image
       shell: bash
-      run: |
-        docker buildx build ${{ inputs.docker-context }} -f ${{ inputs.dockerfile-path }}/Dockerfile \
-        --build-arg GH_PACKAGES_TOKEN=${{ inputs.GH_PACKAGES_TOKEN }} --build-arg ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }} \
-        --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }} \
-        --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest \
-        --push --platform ${{ inputs.platform }}
+      run: docker buildx build ${{ inputs.docker-context }} -f ${{ inputs.dockerfile-path }}/Dockerfile --build-arg GH_PACKAGES_TOKEN=${{ inputs.GH_PACKAGES_TOKEN }} --build-arg ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }} --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }} --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest --push --platform ${{ inputs.platform }}
