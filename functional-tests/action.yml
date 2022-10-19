@@ -28,7 +28,10 @@ runs:
         username: oauth2accesstoken
         password: ${{ steps.auth.outputs.access_token }}
 
-    - name: Run Integration Tests
+    # Here, we spin up the container detached. We used to use --exit-code-from, but exit once a specific container was done, but that
+    # was recently changed to exit when ANY container was done so in case we have startup or setup containers, we'll do this in a
+    # detached fashion :-)
+    - name: Start Integration Tests
       working-directory: ./test
       env:
         UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
@@ -36,13 +39,25 @@ runs:
       run: |
         # Build test container and associated services (and run tests)
         export CLOUDSDK_PYTHON=python2
-        docker-compose -f docker-compose.ci.yml -p test_job_test_1 up --exit-code-from test --force-recreate
+        docker-compose -f docker-compose.ci.yml -p test_job_test_1 up --build --force-recreate -d
+
+    # Here, we ask docker to wait until the Jest test container is done running
+    - name: Wait on Integration tests
+      shell: bash
+      run: docker wait test_job_test_1_test_1
 
     - name: Archive swagger file
       uses: actions/upload-artifact@v3
       with:
         name: swagger-file
         path: test/tests/bin/results/swagger.json
+
+    # should anything go wrong, we always want to nuke the containers and all orphans (startup containers)
+    - name: Shut Down Containers
+      if: always()
+      working-directory: ./test
+      shell: bash
+      run: docker-compose -f docker-compose.ci.yml -p test_job_test_1 down --remove-orphans
 
     - name: Report Integration Test Results
       uses: dorny/test-reporter@v1

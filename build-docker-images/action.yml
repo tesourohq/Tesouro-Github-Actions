@@ -24,7 +24,7 @@ inputs:
     required: true
   platform:
     description: The platform to target for the build
-    default: linux/amd64
+    default: linux/arm64
 runs:
   using: composite
   steps:
@@ -49,28 +49,9 @@ runs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     
-    - name: Docker Meta
-      id: docker_meta_pr
-      env:
-        GCR_REGISTRY: gcr.io/tesouro-cloud
-        CONTAINER_NAME: "${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}"
-      uses: docker/metadata-action@v3
-      with:
-        images: ${{ env.GCR_REGISTRY }}/${{ env.CONTAINER_NAME }}
-        tags: |
-          # version from sem-ver
-          ${{ inputs.sem-ver }}
-          # push latest if we're pushing main
-          type=raw,value=latest,enable={{is_default_branch}}
-    
-    - name: Docker Build and Push
-      uses: docker/build-push-action@v3
-      with:
-        context: ${{ inputs.docker-context }}
-        file: ${{ inputs.dockerfile-path }}/Dockerfile
-        platforms: ${{ inputs.platform }}
-        push: true
-        tags: ${{ steps.docker_meta_pr.outputs.tags }}
-        build-args: |
-          GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }}
-          ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }}
+    # a note here, the actions docker/metadata-action & docker/build-push-action were not built with building on arm architecture in mind. The environment
+    # file used specifies specific linux/amd64 items making building the container impossible (for now)
+    # we'll run our own command for now, but as GitHub Actions releases arm runners (and actions add support), we could switch back
+    - name: Build Arm Image
+      shell: bash
+      run: docker buildx build ${{ inputs.docker-context }} -f ${{ inputs.dockerfile-path }}/Dockerfile --build-arg GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }} --build-arg ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }} --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }} --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest --push --platform ${{ inputs.platform }}
