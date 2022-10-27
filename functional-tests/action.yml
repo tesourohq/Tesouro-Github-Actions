@@ -57,7 +57,7 @@ runs:
       if: always()
       working-directory: ./test
       shell: bash
-      run: docker-compose -f docker-compose.ci.yml -p test_job_test_1 down --remove-orphans --rmi --volumes
+      run: docker-compose -f docker-compose.ci.yml -p test_job_test_1 down --remove-orphans --rmi all --volumes
 
     - name: Report Integration Test Results
       uses: dorny/test-reporter@v1
