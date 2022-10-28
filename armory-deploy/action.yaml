@@ -13,17 +13,25 @@ inputs:
   prod-kustomize-path:
     description: Path from the project root to the production kustomize overlay.
     required: true
+  prod-kustomize-output-path:
+    description: Path to the baked kustomize yaml file
+    required: false
+    default: prod-manifests.yaml
+  working-directory:
+    description: Working directory for the kustomize edit steps
+    required: false
+    default: deployment/kustomize/base
 runs:
   using: composite
   steps:
     - name: Setup Kustomize
       shell: bash
-      working-directory: deployment/kustomize/base
+      working-directory: ${{ inputs.working-directory }}
       run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 
     - name: Bake Prod Manifests
       shell: bash
-      run: kustomize build ${{ inputs.prod-kustomize-path }} -o prod-manifests.yaml
+      run: kustomize build ${{ inputs.prod-kustomize-path }} -o ${{ inputs.prod-kustomize-output-path }}
 
       # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
