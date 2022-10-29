@@ -28,7 +28,7 @@ inputs:
 outputs:
   image-tag:
     description: The tag (other than 'latest') applied to the image and pushed.
-    value: ${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }} # These two values should match exactly what is used in the --tag call below.
+    value: ${{ inputs.sem-ver }}
   image-name:
     description: The full name of the image that was built and pushed.
     value: gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
