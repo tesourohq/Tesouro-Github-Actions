@@ -6,7 +6,7 @@ outputs:
     value: ${{ steps.gitversion.outputs.SemVer }}
   MajorMinorPatch:
     description: Major.Minor.Patch Version Number.
-    value: ${{ steps.gitversion.outputs.majorMinorPatch}}
+    value: ${{ steps.gitversion.outputs.majorMinorPatch }}
   legacySemVerPadded:
     description: Semantic Version Padded
     value: ${{ steps.gitversion.outputs.legacySemVerPadded }}
