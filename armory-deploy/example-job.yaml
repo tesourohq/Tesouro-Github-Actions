@@ -13,7 +13,7 @@
 
         # https://github.com/mikefarah/yq
       - name: Update Version
-        uses: mikefarah/yq@master
+        uses: mikefarah/yq@v4.29.2
         env:
           VERSION: ${{ needs.ci-get-version.outputs.MajorMinorPatch }}
         with:
