@@ -22,7 +22,7 @@ runs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
-        include-prerelease: true
+        include-prerelease: false
         
     - uses: actions/cache@v2
       with:
