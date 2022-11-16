@@ -29,7 +29,7 @@ runs:
         password: ${{ steps.auth.outputs.access_token }}
 
     - name: Clean up existing results
-      working-directory: ./test/tests/bin/results
+      working-directory: test/tests/bin/results
       shell: bash
       run: rm -f swagger.json junit.xml
 
