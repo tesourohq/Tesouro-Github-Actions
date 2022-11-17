@@ -39,12 +39,12 @@ runs:
       run: |
         # Build test container and associated services (and run tests)
         export CLOUDSDK_PYTHON=python2
-        docker-compose -f docker-compose.ci.yml -p test_job_test_1 up --build --force-recreate -d
+        docker-compose -f docker-compose.ci.yml -p job_${{ github.job }}_{{ github.run_number}} up --build --force-recreate -d
 
     # Here, we ask docker to wait until the Jest test container is done running
     - name: Wait on Integration tests
       shell: bash
-      run: docker wait test_job_test_1_test_1
+      run: docker wait job_${{ github.job }}_{{ github.run_number }}_test_1
 
     - name: Archive swagger file
       uses: actions/upload-artifact@v3
@@ -57,7 +57,7 @@ runs:
       if: always()
       working-directory: ./test
       shell: bash
-      run: docker-compose -f docker-compose.ci.yml -p test_job_test_1 down --remove-orphans --rmi all --volumes
+      run: docker-compose -f docker-compose.ci.yml -p job_${{ github.job }}_{{ github.run_number }} down --remove-orphans --rmi all --volumes
 
     - name: Report Integration Test Results
       uses: dorny/test-reporter@v1
