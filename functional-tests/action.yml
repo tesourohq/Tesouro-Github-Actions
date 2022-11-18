@@ -7,6 +7,9 @@ inputs:
   image-name:
     description: Base image name to store in GCR
     required: true
+  pacts-image-name:
+    description: Image holding the pacts for this test run
+    required: false
   gcloud-service-account:
     description: Google Cloud service account
     required: true
@@ -35,6 +38,7 @@ runs:
       working-directory: ./test
       env:
         UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+        UNDERTEST_PACTS_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.pacts-image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
       shell: bash
       run: |
         # Build test container and associated services (and run tests)
