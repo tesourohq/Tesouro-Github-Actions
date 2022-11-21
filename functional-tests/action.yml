@@ -48,7 +48,7 @@ runs:
     # Here, we ask docker to wait until the Jest test container is done running
     - name: Wait on Integration tests
       shell: bash
-      run: docker wait test_job_test_1_test_1
+      run: docker wait test_job_test_1-test-1
 
     - name: Archive swagger file
       uses: actions/upload-artifact@v3
