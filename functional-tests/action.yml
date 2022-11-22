@@ -13,6 +13,9 @@ inputs:
   gcloud-service-account:
     description: Google Cloud service account
     required: true
+  pact-broker-token:
+    description: Read/Write token that can be used to deploy/verify pacts at tesouro.pactflow.io
+    required: false
 runs:
   using: composite
   steps:
@@ -43,7 +46,7 @@ runs:
       env:
         UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
         UNDERTEST_PACTS_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.pacts-image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
-        PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+        PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
         PROVIDER_APP_VERSION: ${{ inputs.sem-ver }}
       shell: bash
       run: |
