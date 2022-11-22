@@ -58,6 +58,11 @@ runs:
     - name: Wait on Integration tests
       shell: bash
       run: docker wait test_${{ github.job }}-test-1
+      
+    - name: Wait on Pact Publishing
+      shell: bash
+      if: ${{ inputs.pact-broker-token }}
+      run: docker wait test_${{ github.job }}-pact-verifier-1
 
     - name: Archive swagger file
       uses: actions/upload-artifact@v3
