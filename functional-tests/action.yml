@@ -49,7 +49,6 @@ runs:
         PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
         PROVIDER_APP_VERSION: ${{ inputs.sem-ver }}
         GIT_BRANCH: ${{ github.ref_name }}
-        GIT_COMMIT: ${{ github.sha }}
       shell: bash
       run: |
         # Build test container and associated services (and run tests)
