@@ -33,7 +33,7 @@ runs:
 
     - name: Clean up existing results
       shell: bash
-      run: sudo rm -f ./test/tests/bin/results/swagger.json test/tests/bin/results/*.xml
+      run: sudo rm -rf ./test/tests/bin
 
     # Here, we spin up the container detached. We used to use --exit-code-from, but exit once a specific container was done, but that
     # was recently changed to exit when ANY container was done so in case we have startup or setup containers, we'll do this in a
@@ -77,4 +77,4 @@ runs:
 
     - name: Clean up results
       shell: bash
-      run: sudo rm -f ./test/tests/bin/results/swagger.json test/tests/bin/results/*.xml
+      run: sudo rm -rf ./test/tests/bin
