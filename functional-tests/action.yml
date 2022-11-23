@@ -76,5 +76,6 @@ runs:
         reporter: jest-junit
 
     - name: Clean up results
+      if: always()
       shell: bash
       run: sudo rm -rf ./test/tests/bin
