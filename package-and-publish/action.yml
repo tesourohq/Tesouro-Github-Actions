@@ -17,6 +17,9 @@ inputs:
   info-ver:
     description: Informational Version
     required: true
+  gh-packages-token:
+    description: Github packages token
+    required: true
 runs:
   using: composite
   steps:
