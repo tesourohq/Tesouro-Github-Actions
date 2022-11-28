@@ -1,0 +1,65 @@
+name: Package and publish
+description: Package and publish a library
+inputs:
+  project-file:
+    description: The project file name with relative path
+    required: true
+  dotnet-version:
+    description: The version of .NET for Setup task
+    default: 7.0.*
+    required: false
+  sem-ver:
+    description: Version of the package
+    required: true
+  assembly-ver:
+    description: Version of the assembly
+    required: true
+  info-ver:
+    description: Informational Version
+    required: true
+  gh-packages-token:
+    description: Github packages token
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+        include-prerelease: false
+
+    - uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore
+      working-directory: ./src
+      shell: bash
+      run: >-
+        dotnet nuget add source --username USERNAME --password ${{ inputs.gh-packages-token }} --store-password-in-clear-text --name github https://nuget.pkg.github.com/tesourohq/index.json || true
+        && dotnet restore ${{ inputs.project-file }}
+
+    - name: Build
+      working-directory: ./src
+      shell: bash
+      run: dotnet build --no-restore -c Release ${{ inputs.project-file }} /p:Version=${{ inputs.assembly-ver }} /p:AssemblyVersion=${{ inputs.assembly-ver }} /p:InformationalVersion=${{ inputs.info-ver }}
+      
+    - name: Pack
+      working-directory: ./src
+      shell: bash
+      run: dotnet pack --no-build -c Release /p:PackageVersion=${{ inputs.sem-ver }} ${{ inputs.project-file }}
+
+    - name: Push
+      working-directory: ./src
+      shell: bash
+      run: >-
+        dotnet nuget push **/*.${{ inputs.sem-ver }}.nupkg -k ${{ inputs.gh-packages-token }} -s github
