@@ -35,6 +35,18 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Login to Dockerhub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
     - name: Authorize with GCloud
       id: 'auth'
       uses: 'google-github-actions/auth@v0'
@@ -42,20 +54,14 @@ runs:
         token_format: access_token
         workload_identity_provider: projects/274784588410/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc-provider
         service_account: ${{ inputs.gcloud-service-account }}
-    
+
     - name: Login to GCR
       uses: docker/login-action@v2
       with:
         registry: gcr.io
         username: oauth2accesstoken
         password: ${{ steps.auth.outputs.access_token }}
-    
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    
+
     # a note here, the actions docker/metadata-action & docker/build-push-action were not built with building on arm architecture in mind. The environment
     # file used specifies specific linux/amd64 items making building the container impossible (for now)
     # we'll run our own command for now, but as GitHub Actions releases arm runners (and actions add support), we could switch back
