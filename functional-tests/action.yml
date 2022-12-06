@@ -16,6 +16,11 @@ inputs:
   pact-broker-token:
     description: Read/Write token that can be used to deploy/verify pacts at tesouro.pactflow.io
     required: false
+  dockerhub-username:
+    description: The Dockerhub username for the account that will pull third party images.
+    required: true
+  dockerhub-access-token:
+    description: The PAT for the Dockerhub account.
 runs:
   using: composite
   steps:
@@ -26,13 +31,19 @@ runs:
         token_format: access_token
         workload_identity_provider: projects/274784588410/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc-provider
         service_account: ${{ inputs.gcloud-service-account }}
-    
+
     - name: Login to GCR
       uses: docker/login-action@v2
       with:
         registry: gcr.io
         username: oauth2accesstoken
         password: ${{ steps.auth.outputs.access_token }}
+
+    - name: Login to Dockerhub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-access-token }}
 
     - name: Clean up existing results
       shell: bash
@@ -59,7 +70,7 @@ runs:
     - name: Wait on Integration tests
       shell: bash
       run: docker wait test_${{ github.job }}-test-1
-      
+
     - name: Wait on Pact Publishing
       shell: bash
       if: ${{ inputs.pact-broker-token }}
