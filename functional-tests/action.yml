@@ -71,11 +71,6 @@ runs:
       shell: bash
       run: docker wait test_${{ github.job }}-test-1
       
-    - name: Print Pact Generator Results
-      shell: bash
-      if: ${{ inputs.pacts-image-name }}
-      run: docker logs test_${{ github.job }}-pact-generator-1
-
     - name: Wait on Pact Publishing
       shell: bash
       if: ${{ inputs.pact-broker-token }}
@@ -92,7 +87,9 @@ runs:
       if: always()
       working-directory: ./test
       shell: bash
-      run: docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
+      run: |
+        test ${{ inputs.pacts-image-name }} && docker logs test_${{ github.job }}-pact-generator-1
+        docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
 
     - name: Report Integration Test Results
       uses: dorny/test-reporter@v1
