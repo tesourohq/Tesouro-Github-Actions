@@ -25,6 +25,11 @@ inputs:
   platform:
     description: The platform to target for the build
     default: linux/arm64
+  dockerhub-username:
+    description: The Dockerhub username for the account that will pull third party images.
+    required: true
+  dockerhub-access-token:
+    description: The PAT for the Dockerhub account.
 outputs:
   image-tag:
     description: The tag (other than 'latest') applied to the image and pushed.
@@ -38,8 +43,8 @@ runs:
     - name: Login to Dockerhub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-access-token }}
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1

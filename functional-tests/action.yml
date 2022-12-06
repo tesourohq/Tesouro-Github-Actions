@@ -16,6 +16,11 @@ inputs:
   pact-broker-token:
     description: Read/Write token that can be used to deploy/verify pacts at tesouro.pactflow.io
     required: false
+  dockerhub-username:
+    description: The Dockerhub username for the account that will pull third party images.
+    required: true
+  dockerhub-access-token:
+    description: The PAT for the Dockerhub account.
 runs:
   using: composite
   steps:
@@ -37,8 +42,8 @@ runs:
     - name: Login to Dockerhub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-access-token }}
 
     - name: Clean up existing results
       shell: bash
