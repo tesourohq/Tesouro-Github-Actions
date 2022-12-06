@@ -82,14 +82,17 @@ runs:
         name: swagger-file
         path: test/tests/bin/results/swagger.json
 
+    - name: Print Pact Generator Results
+      shell: bash
+      if: failure() && ${{ inputs.pacts-image-name }}
+      run: docker logs test_${{ github.job }}-pact-generator-1
+
     # should anything go wrong, we always want to nuke the containers and all orphans (startup containers)
     - name: Shut Down Containers
       if: always()
       working-directory: ./test
       shell: bash
-      run: |
-        test ${{ inputs.pacts-image-name }} && docker logs test_${{ github.job }}-pact-generator-1
-        docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
+      run: docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
 
     - name: Report Integration Test Results
       uses: dorny/test-reporter@v1
