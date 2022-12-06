@@ -19,8 +19,10 @@ inputs:
   dockerhub-username:
     description: The Dockerhub username for the account that will pull third party images.
     required: true
+    default: ${{ secrets.DOCKERHUB_USERNAME }}
   dockerhub-access-token:
     description: The PAT for the Dockerhub account.
+    default: ${{ secrets.DOCKERHUB_TOKEN }}
 runs:
   using: composite
   steps:
