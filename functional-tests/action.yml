@@ -84,7 +84,7 @@ runs:
 
     - name: Print Pact Generator Results
       shell: bash
-      if: failure() && ${{ inputs.pacts-image-name }}
+      if: ${{ inputs.pacts-image-name }}
       run: docker logs test_${{ github.job }}-pact-generator-1
 
     # should anything go wrong, we always want to nuke the containers and all orphans (startup containers)
