@@ -82,7 +82,7 @@ runs:
       shell: bash
       run: docker wait test_${{ github.job }}-test-1
       
-    - name: Wait on Pact Publishing
+    - name: Wait on Pact Verifier
       shell: bash
       if: ${{ inputs.pact-broker-token }}
       run: docker wait test_${{ github.job }}-pact-verifier-1
