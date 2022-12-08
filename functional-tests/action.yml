@@ -48,6 +48,15 @@ runs:
     - name: Clean up existing results
       shell: bash
       run: sudo rm -rf ./test/tests/bin
+      
+    - name: Download pact from this build
+      uses: actions/download-artifact@v3
+      with:
+        name: pact-file
+        
+    - name: Display the structure of the directory including the downloaded files
+      shell: bash
+      run: ls -lR
 
     # Here, we spin up the container detached. We used to use --exit-code-from, but exit once a specific container was done, but that
     # was recently changed to exit when ANY container was done so in case we have startup or setup containers, we'll do this in a
@@ -81,11 +90,11 @@ runs:
       with:
         name: swagger-file
         path: test/tests/bin/results/swagger.json
-
-    - name: Print Pact Generator Results
+        
+    - name: Print Docker Logs
       shell: bash
       if: always()
-      run: docker logs test_${{ github.job }}-pact-generator-1
+      run: docker compose -p test_${{ github.job }} logs
 
     # should anything go wrong, we always want to nuke the containers and all orphans (startup containers)
     - name: Shut Down Containers
