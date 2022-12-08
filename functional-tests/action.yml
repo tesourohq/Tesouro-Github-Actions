@@ -53,6 +53,7 @@ runs:
       uses: actions/download-artifact@v3
       with:
         name: pact-file
+        path: pacts
         
     - name: Display the structure of the directory including the downloaded files
       shell: bash
