@@ -7,8 +7,8 @@ inputs:
   image-name:
     description: Base image name to store in GCR
     required: true
-  pacts-image-name:
-    description: Image holding the pacts for this test run
+  pacts-path:
+    description: Path relative to root where the pact files should be downloaded to
     required: false
   gcloud-service-account:
     description: Google Cloud service account
@@ -51,9 +51,10 @@ runs:
       
     - name: Download pact from this build
       uses: actions/download-artifact@v3
+      if: ${{ inputs.pacts-path }}
       with:
         name: pact-file
-        path: pacts
+        path: ${{ inputs.pacts-path }}
         
     - name: Display the structure of the directory including the downloaded files
       shell: bash
