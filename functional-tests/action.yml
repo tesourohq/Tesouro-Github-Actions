@@ -96,7 +96,7 @@ runs:
     - name: Print Docker Logs
       shell: bash
       if: always()
-      run: docker compose -p test_${{ github.job }} logs
+      run: docker compose -p test_${{ github.job }} logs -t
 
     # should anything go wrong, we always want to nuke the containers and all orphans (startup containers)
     - name: Shut Down Containers
