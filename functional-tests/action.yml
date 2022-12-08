@@ -95,7 +95,7 @@ runs:
       run: docker compose -p test_${{ github.job }} logs -t > functional_test_docker_logs.txt
       
     - name: Archive the Docker Logs
-      uses: action/upload-artifact@v3
+      uses: actions/upload-artifact@v3
       with:
         name: functional_test_docker_logs
         path: functional_test_docker_logs.txt
