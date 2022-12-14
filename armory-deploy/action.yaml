@@ -10,11 +10,18 @@ inputs:
   armory-yaml-path:
     description: Path to the armory-deployment.yaml file.
     required: true
+  stage-kustomize-path:
+    description: Path from the project root to the stage kustomize overlay.
+    required: true
+  stage-kustomize-output-path:
+    description: Path to the baked stage manifest yaml file
+    required: false
+    default: stage-manifests.yaml
   prod-kustomize-path:
     description: Path from the project root to the production kustomize overlay.
     required: true
   prod-kustomize-output-path:
-    description: Path to the baked kustomize yaml file
+    description: Path to the baked prod manifest yaml file
     required: false
     default: prod-manifests.yaml
   working-directory:
@@ -29,6 +36,10 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 
+    - name: Bake Stage Manifests
+      shell: bash
+      run: kustomize build ${{ inputs.stage-kustomize-path }} -o ${{ inputs.stage-kustomize-output-path }}
+
     - name: Bake Prod Manifests
       shell: bash
       run: kustomize build ${{ inputs.prod-kustomize-path }} -o ${{ inputs.prod-kustomize-output-path }}
@@ -41,6 +52,7 @@ runs:
         clientId: ${{ inputs.armory-client-id }}
         clientSecret: ${{ inputs.armory-client-secret }}
         path-to-file: ${{ inputs.armory-yaml-path }}
+
 # TODO: I've confirmed with Armory that this doesn't work yet. Going to comment it out and restore it in the future.
 # - name: Update Summary with Deployment link
 #   env:
