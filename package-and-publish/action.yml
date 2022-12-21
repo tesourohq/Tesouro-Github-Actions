@@ -62,4 +62,4 @@ runs:
       working-directory: ./src
       shell: bash
       run: >-
-        dotnet nuget push **/*.${{ inputs.sem-ver }}.nupkg -k ${{ inputs.gh-packages-token }} -s github
+        dotnet nuget push **/*.${{ inputs.sem-ver }}.nupkg -k ${{ inputs.gh-packages-token }} -s github --skip-duplicate
