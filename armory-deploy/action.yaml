@@ -47,15 +47,9 @@ runs:
       # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
       id: armory-deploy
-      uses: armory/cli-deploy-action@v1.0.0
+      uses: armory/cli-deploy-action@main
       with:
         clientId: ${{ inputs.armory-client-id }}
         clientSecret: ${{ inputs.armory-client-secret }}
         path-to-file: ${{ inputs.armory-yaml-path }}
-
-# TODO: I've confirmed with Armory that this doesn't work yet. Going to comment it out and restore it in the future.
-# - name: Update Summary with Deployment link
-#   env:
-#     URL: ${{ steps.armory-deploy.outputs.deployment-link }}
-#   shell: bash
-#   run: echo ${URL} >> $GITHUB_STEP_SUMMARY && echo ${{ steps.armory-deploy.outputs.deployment-link }} >> $GITHUB_STEP_SUMMARY
+        waitForDeployment: true
