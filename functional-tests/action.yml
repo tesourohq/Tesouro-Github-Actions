@@ -115,6 +115,14 @@ runs:
         path: test/tests/bin/results/*.xml
         reporter: jest-junit
 
+    - name: Report Pact Provider Results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Pact Provider Verification
+        path: test/tests/bin/pact/*.xml
+        reporter: java-junit
+
     - name: Clean up results
       if: always()
       shell: bash
