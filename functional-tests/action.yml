@@ -120,7 +120,8 @@ runs:
       if: ${{ inputs.pact-broker-token }}
       with:
         name: Pact Provider Verification
-        path: test/tests/bin/pact/*.xml
+        #path: test/tests/bin/pact/*.xml
+        path: FOO
         reporter: java-junit
 
     - name: Clean up results
