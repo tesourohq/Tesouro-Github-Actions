@@ -117,7 +117,7 @@ runs:
 
     - name: Report Pact Provider Results
       uses: dorny/test-reporter@v1
-      if: ${{ inputs.pact-broker-token }}
+      if: ${{ inputs.pact-broker-token }} && hashFiles('test/tests/bin/pact/foo*.xml')
       with:
         name: Pact Provider Verification
         #path: test/tests/bin/pact/*.xml
