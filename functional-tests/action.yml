@@ -117,7 +117,7 @@ runs:
 
     - name: Report Pact Provider Results
       uses: dorny/test-reporter@v1
-      if: always()
+      if: ${{ inputs.pact-broker-token }}
       with:
         name: Pact Provider Verification
         path: test/tests/bin/pact/*.xml
