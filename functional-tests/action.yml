@@ -16,6 +16,9 @@ inputs:
   pact-broker-token:
     description: Read/Write token that can be used to deploy/verify pacts at tesouro.pactflow.io
     required: false
+  pact-provider-verification:
+    description: Set to true if we want to generate results from pact provider verification
+    required: false
   dockerhub-username:
     description: The Dockerhub username for the account that will pull third party images.
     required: true
@@ -117,11 +120,10 @@ runs:
 
     - name: Report Pact Provider Results
       uses: dorny/test-reporter@v1
-      if: ${{ inputs.pact-broker-token }} && hashFiles('test/tests/bin/pact/foo*.xml')
+      if: ${{ inputs.pact-provider-verification }}
       with:
         name: Pact Provider Verification
-        #path: test/tests/bin/pact/*.xml
-        path: FOO
+        path: test/tests/bin/pact/*.xml
         reporter: java-junit
 
     - name: Clean up results
