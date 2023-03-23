@@ -57,7 +57,7 @@ runs:
     - name: Start Provider Verification Tests
       working-directory: ./test
       env:
-        UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+        UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}:latest"
         PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
         PROVIDER_APP_VERSION: ${{ inputs.sem-ver }}
         GIT_BRANCH: ${{ github.ref_name }}
