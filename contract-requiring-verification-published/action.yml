@@ -59,7 +59,7 @@ runs:
       env:
         UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}:latest"
         PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
-        PROVIDER_APP_VERSION: ${{ inputs.sem-ver }}
+        PROVIDER_APP_VERSION: ${{ inputs.provider-version_number }}
         GIT_BRANCH: ${{ github.ref_name }}
         PACT_URL: ${{ inputs.pact-url }}
       shell: bash
