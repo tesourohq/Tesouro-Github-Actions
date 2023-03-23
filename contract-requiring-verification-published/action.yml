@@ -88,7 +88,7 @@ runs:
     # should anything go wrong, we always want to nuke the containers and all orphans (startup containers)
     - name: Shut Down Containers
       if: always()
-      working-directory: ./test/pacts
+      working-directory: ./test
       shell: bash
       run: docker-compose -f  docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
 
