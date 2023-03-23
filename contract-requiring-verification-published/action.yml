@@ -55,7 +55,7 @@ runs:
     # was recently changed to exit when ANY container was done so in case we have startup or setup containers, we'll do this in a
     # detached fashion :-)
     - name: Start Provider Verification Tests
-      working-directory: ./test/pacts
+      working-directory: ./test
       env:
         UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
         PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
@@ -66,7 +66,7 @@ runs:
       run: |
         # Build pact verification container and associated services
         export CLOUDSDK_PYTHON=python2
-        docker-compose -f docker-compose.ci.pacts-changed.yml -p test_${{ github.job }} up --build --force-recreate -d
+        docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} up --build --force-recreate -d
 
     # Here, we ask docker to wait until the Pact Verifier container is done running
     - name: Wait on Pact Verification
@@ -74,9 +74,28 @@ runs:
       if: ${{ inputs.pact-broker-token }}
       run: docker wait test_${{ github.job }}-pact-verifier-1
 
+    - name: Print Docker Logs
+      shell: bash
+      if: always()
+      run: docker compose -p test_${{ github.job }} logs -t > pact_verification_logs.txt
+
+    - name: Archive the Docker Logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: pact_verification_logs
+        path: pact_verification_logs.txt
+
     # should anything go wrong, we always want to nuke the containers and all orphans (startup containers)
     - name: Shut Down Containers
       if: always()
       working-directory: ./test/pacts
       shell: bash
-      run: docker-compose -f  docker-compose.ci.pacts-changed.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
+      run: docker-compose -f  docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
+
+    - name: Report Pact Provider Results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Pact Provider Verification
+        path: test/tests/bin/pact/*.xml
+        reporter: java-junit
