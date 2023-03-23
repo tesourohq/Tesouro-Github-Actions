@@ -81,6 +81,7 @@ runs:
 
     - name: Archive the Docker Logs
       uses: actions/upload-artifact@v3
+      if: always()
       with:
         name: pact_verification_logs
         path: pact_verification_logs.txt
