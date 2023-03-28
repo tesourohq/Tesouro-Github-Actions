@@ -28,6 +28,22 @@ inputs:
     description: Working directory for the kustomize edit steps
     required: false
     default: deployment/kustomize/base
+  stage-kustomize-database-migration-path:
+    description: Path from the project root to the stage database migration kustomize overlay.
+    required: false
+    default: ''
+  stage-kustomize-database-migration-output-path:
+    description: Path to the baked stage manifest yaml file
+    required: false
+    default: stage-database-migration-manifests.yaml
+  prod-kustomize-database-migration-path:
+    description: Path from the project root to the production database migration  kustomize overlay.
+    required: false
+    default: ''
+  prod-kustomize-database-migration-output-path:
+    description: Path to the baked production manifest yaml file
+    required: false
+    default: prod-database-migration-manifests.yaml
 runs:
   using: composite
   steps:
@@ -36,9 +52,19 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 
+    - name: Bake Stage Database Migration Manifest
+      if: ${{ inputs.stage-kustomize-database-migration-path }} != '' # Only if passed in
+      shell: bash
+      run: kustomize build ${{ inputs.stage-kustomize-database-migration-path }} -o ${{ inputs.stage-kustomize-database-migration-output-path }}
+
     - name: Bake Stage Manifests
       shell: bash
       run: kustomize build ${{ inputs.stage-kustomize-path }} -o ${{ inputs.stage-kustomize-output-path }}
+
+    - name: Bake Prod Database Migration Manifest
+      if: ${{ inputs.prod-kustomize-database-migration-path }} != '' # Only if passed in
+      shell: bash
+      run: kustomize build ${{ inputs.prod-kustomize-database-migration-path }} -o ${{ inputs.prod-kustomize-database-migration-output-path }}
 
     - name: Bake Prod Manifests
       shell: bash
