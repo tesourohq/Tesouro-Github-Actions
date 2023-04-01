@@ -46,6 +46,7 @@ runs:
 
       # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
+      if: github.ref == 'refs/heads/main' # Only on main.
       id: armory-deploy
       uses: armory/cli-deploy-action@main
       with:
