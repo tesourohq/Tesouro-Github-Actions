@@ -1,0 +1,27 @@
+name: ArgoCD Deploy
+description: Deploy using ArgoCD
+inputs:
+  argocd-application-name:
+    description: ArgoCD application name, must match the application manifest.
+    required: true
+  argocd-username:
+    description: ArgoCD service account username.
+    required: true
+  argocd-password:
+    description: ArgoCD service account password.
+    required: true
+  argocd-host:
+    description: ArgoCD host.
+    required: true
+runs:
+  using: composite
+  steps:
+      # https://docs.armory.io/cd-as-a-service/setup/gh-action/
+    - name: Deploy
+      if: github.ref == 'refs/heads/main' # Only on main.
+      id: argocd-deploy
+      shell: bash
+      run: |
+        json=$(jq -n --arg un "${{ inputs.argocd-username }}" --arg pw "${{ inputs.argocd-password }}" '{username:$un,password:$pw}')
+        token=$(curl -s -X POST "${{ inputs.argocd-host }}/api/v1/session" -d "$json" | jq --raw-output '.token')
+        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Authorization: Bearer $token" | jq
