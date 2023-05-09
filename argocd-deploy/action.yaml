@@ -16,7 +16,6 @@ inputs:
 runs:
   using: composite
   steps:
-      # https://docs.armory.io/cd-as-a-service/setup/gh-action/
     - name: Deploy
       if: github.ref == 'refs/heads/main' # Only on main.
       id: argocd-deploy
