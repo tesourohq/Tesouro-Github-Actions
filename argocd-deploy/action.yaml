@@ -14,13 +14,13 @@ inputs:
     description: ArgoCD host.
     required: true
   github-token:
-    description: CI github token
+    description: CI github token.
     required: true
   ci-username:
-    description: CI github username
+    description: CI github username.
     required: true
   ci-email:
-    description: CI github email
+    description: CI github email.
     required: true
 runs:
   using: composite
