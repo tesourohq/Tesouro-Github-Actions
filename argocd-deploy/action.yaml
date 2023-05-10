@@ -13,9 +13,30 @@ inputs:
   argocd-host:
     description: ArgoCD host.
     required: true
+  github-token:
+    description: Github token
+    required: true
 runs:
   using: composite
   steps:
+    - name: CheckoutRepo
+      uses: actions/checkout@v3
+      with:
+        token: ${{ inputs.github-token }}
+
+    # Commit and push.
+    - name: Apply sha to version
+      shell: bash
+      # Only run on main branch push (e.g. pull request merge).
+      if: github.event_name == 'push'
+      run: |
+        yq e '.spec.template.metadata.labels.version = "${{ github.sha }}"' -i ./deployment/kustomize/base/deployment.yaml
+        git config --global user.name "ci-tesouro"
+        git config --global user.email "ci@tesouro.com"
+        git add
+        git commit -m "Version Increment"
+        git push
+
     - name: Deploy
       if: github.ref == 'refs/heads/main' # Only on main.
       id: argocd-deploy
