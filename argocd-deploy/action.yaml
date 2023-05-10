@@ -16,6 +16,12 @@ inputs:
   github-token:
     description: CI github token
     required: true
+  ci-username:
+    description: CI github username
+    required: true
+  ci-email:
+    description: CI github email
+    required: true
 runs:
   using: composite
   steps:
@@ -31,10 +37,10 @@ runs:
       if: github.event_name == 'push'
       run: |
         yq e '.spec.template.metadata.labels.version = "${{ github.sha }}"' -i ./deployment/kustomize/base/deployment.yaml
-        git config --global user.name "ci-tesouro"
-        git config --global user.email "ci@tesouro.com"
+        git config --global user.name "${{ inputs.ci-username }}"
+        git config --global user.email "${{ inputs.ci-email }}"
         git add
-        git commit -m "Version Increment"
+        git commit -m "Versioning Commit"
         git push
 
     - name: Deploy
