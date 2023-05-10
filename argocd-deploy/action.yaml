@@ -14,7 +14,7 @@ inputs:
     description: ArgoCD host.
     required: true
   github-token:
-    description: Github token
+    description: CI github token
     required: true
 runs:
   using: composite
