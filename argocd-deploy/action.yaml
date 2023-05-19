@@ -1,0 +1,55 @@
+name: ArgoCD Deploy
+description: Deploy using ArgoCD
+inputs:
+  argocd-application-name:
+    description: ArgoCD application name, must match the application manifest.
+    required: true
+  argocd-apikey:
+    description: ArgoCD service account api-key.
+    required: true
+  argocd-host:
+    description: ArgoCD host.
+    required: true
+  github-token:
+    description: CI github token.
+    required: true
+  ci-username:
+    description: CI github username.
+    required: true
+  ci-email:
+    description: CI github email.
+    required: true
+  semver:
+    description: Semantic Version.
+    required: true
+  image-name:
+    description: Tagged image name to be deployed.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: CheckoutRepo
+      uses: actions/checkout@v3
+      with:
+        token: ${{ inputs.github-token }}
+
+    # Commit and push.
+    - name: Apply semver-sha to version
+      shell: bash
+      # Only run on main branch push (e.g. pull request merge).
+      if: github.event_name == 'push'
+      run: |
+        yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}-${{ github.sha }}"' ./deployment/kustomize/base/deployment.yaml
+        yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ./deployment/kustomize/base/deployment.yaml
+        git config --global user.name "${{ inputs.ci-username }}"
+        git config --global user.email "${{ inputs.ci-email }}"
+        git add
+        git commit -m "Versioning Commit"
+        git push
+
+    - name: Deploy
+      if: github.ref == 'refs/heads/main' # Only on main.
+      id: argocd-deploy
+      shell: bash
+      run: |
+        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Authorization: Bearer ${{ inputs.argocd-apikey }}" | jq
