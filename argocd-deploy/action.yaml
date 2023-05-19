@@ -4,11 +4,8 @@ inputs:
   argocd-application-name:
     description: ArgoCD application name, must match the application manifest.
     required: true
-  argocd-username:
-    description: ArgoCD service account username.
-    required: true
-  argocd-password:
-    description: ArgoCD service account password.
+  argocd-apikey:
+    description: ArgoCD service account api-key.
     required: true
   argocd-host:
     description: ArgoCD host.
@@ -48,6 +45,4 @@ runs:
       id: argocd-deploy
       shell: bash
       run: |
-        json=$(jq -n --arg un "${{ inputs.argocd-username }}" --arg pw "${{ inputs.argocd-password }}" '{username:$un,password:$pw}')
-        token=$(curl -s -X POST "${{ inputs.argocd-host }}/api/v1/session" -d "$json" | jq --raw-output '.token')
-        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Authorization: Bearer $token" | jq
+        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Authorization: Bearer ${{ inputs.argocd-apikey }}" | jq
