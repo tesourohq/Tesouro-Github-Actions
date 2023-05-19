@@ -12,7 +12,7 @@ inputs:
     required: true
   stage-kustomize-path:
     description: Path from the project root to the stage kustomize overlay.
-    required: true
+    required: false
   stage-kustomize-output-path:
     description: Path to the baked stage manifest yaml file
     required: false
@@ -58,6 +58,7 @@ runs:
       run: kustomize build ${{ inputs.stage-kustomize-database-migration-path }} -o ${{ inputs.stage-kustomize-database-migration-output-path }}
 
     - name: Bake Stage Manifests
+      if: ${{ inputs.stage-kustomize-path != '' }} # Only if passed in
       shell: bash
       run: kustomize build ${{ inputs.stage-kustomize-path }} -o ${{ inputs.stage-kustomize-output-path }}
 
