@@ -24,6 +24,9 @@ inputs:
     required: true
   dockerhub-access-token:
     description: The PAT for the Dockerhub account.
+  rover-flag:
+    description: Flag indicating whether rover is running, and should be waited for.
+    required: false
 runs:
   using: composite
   steps:
@@ -85,7 +88,12 @@ runs:
       shell: bash
       if: ${{ inputs.pact-broker-token }}
       run: docker wait test_${{ github.job }}-pact-verifier-1
-    
+      
+    - name: Wait on Rover
+      shell: bash
+      if: ${{ inputs.rover-flag }}
+      run: docker wait test_${{ github.job }}-rover-1
+      
     - name: Archive swagger file
       uses: actions/upload-artifact@v3
       with:
