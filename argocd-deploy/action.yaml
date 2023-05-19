@@ -19,6 +19,12 @@ inputs:
   ci-email:
     description: CI github email.
     required: true
+  semver:
+    description: Semantic Version.
+    required: true
+  image-name:
+    description: Tagged image name to be deployed.
+    required: true
 runs:
   using: composite
   steps:
@@ -28,12 +34,13 @@ runs:
         token: ${{ inputs.github-token }}
 
     # Commit and push.
-    - name: Apply sha to version
+    - name: Apply semver-sha to version
       shell: bash
       # Only run on main branch push (e.g. pull request merge).
       if: github.event_name == 'push'
       run: |
-        yq e '.spec.template.metadata.labels.version = "${{ github.sha }}"' -i ./deployment/kustomize/base/deployment.yaml
+        yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}-${{ github.sha }}"' ./deployment/kustomize/base/deployment.yaml
+        yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ./deployment/kustomize/base/deployment.yaml
         git config --global user.name "${{ inputs.ci-username }}"
         git config --global user.email "${{ inputs.ci-email }}"
         git add
