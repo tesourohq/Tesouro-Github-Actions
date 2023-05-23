@@ -25,6 +25,9 @@ inputs:
   image-name:
     description: Tagged image name to be deployed.
     required: true
+  path-to-version-patch:
+    description: Path to kubernetes base deployment yaml.
+    required: true
 runs:
   using: composite
   steps:
@@ -39,8 +42,8 @@ runs:
       # Only run on main branch push (e.g. pull request merge).
       if: github.event_name == 'push'
       run: |
-        yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}-${{ github.sha }}"' ./deployment/kustomize/base/deployment.yaml
-        yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ./deployment/kustomize/base/deployment.yaml
+        yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}-${{ github.sha }}"' ${{ inputs.path-to-version-patch }}
+        yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ${{ inputs.path-to-version-patch }}
         git config --global user.name "${{ inputs.ci-username }}"
         git config --global user.email "${{ inputs.ci-email }}"
         git add
