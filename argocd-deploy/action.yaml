@@ -46,8 +46,7 @@ runs:
         yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ${{ inputs.path-to-version-patch }}
         git config --global user.name "${{ inputs.ci-username }}"
         git config --global user.email "${{ inputs.ci-email }}"
-        git add
-        git commit -m "Versioning Commit"
+        git commit -a -m "Versioning Commit"
         git push
 
     - name: Deploy
