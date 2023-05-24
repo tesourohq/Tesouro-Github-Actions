@@ -65,7 +65,7 @@ runs:
     # Here, we spin up the container detached. We used to use --exit-code-from, but exit once a specific container was done, but that
     # was recently changed to exit when ANY container was done so in case we have startup or setup containers, we'll do this in a
     # detached fashion :-)
-    - name: Start Integration Tests
+    - name: Start Functional Tests
       working-directory: ./test
       env:
         UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
@@ -80,7 +80,7 @@ runs:
         docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} up --build --force-recreate -d
 
     # Here, we ask docker to wait until the Jest test container is done running
-    - name: Wait on Integration tests
+    - name: Wait on Functional tests
       shell: bash
       run: docker wait test_${{ github.job }}-test-1
       
@@ -118,11 +118,11 @@ runs:
       shell: bash
       run: docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
 
-    - name: Report Integration Test Results
+    - name: Report Functional Test Results
       uses: dorny/test-reporter@v1
       if: always()
       with:
-        name: Integration Tests
+        name: Functional Tests
         path: test/tests/bin/results/*.xml
         reporter: jest-junit
 
