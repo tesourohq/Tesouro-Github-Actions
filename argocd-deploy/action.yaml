@@ -35,6 +35,7 @@ runs:
       uses: actions/checkout@v3
       with:
         token: ${{ inputs.github-token }}
+        fetch-depth: 0
 
     # Commit and push.
     - name: Apply semver-sha to version
