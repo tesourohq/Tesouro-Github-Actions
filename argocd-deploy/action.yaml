@@ -43,12 +43,12 @@ runs:
       # Only run on main branch push (e.g. pull request merge).
       if: github.event_name == 'push'
       run: |
+        git config --global user.name "${{ inputs.ci-username }}"
+        git config --global user.email "${{ inputs.ci-email }}"
         git checkout release
         git merge --no-commit main
         yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}.${{ github.run_attempt }}-${{ github.sha }}"' ${{ inputs.path-to-version-patch }}
         yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ${{ inputs.path-to-version-patch }}
-        git config --global user.name "${{ inputs.ci-username }}"
-        git config --global user.email "${{ inputs.ci-email }}"
         git commit -a -m "Version ${{ inputs.semver }}.${{ github.run_attempt }}-${{ github.sha }}"
         git push
 
