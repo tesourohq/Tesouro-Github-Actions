@@ -50,7 +50,7 @@ runs:
         token: ${{ steps.generate_token.outputs.token }}
         repo: ${{ github.repository }}
       shell: bash
-      if: github.ref == 'refs/heads/main
+      if: github.ref == 'refs/heads/main'
       run: |
         jsonbody=$(curl -s -L \
         -H "Accept: application/vnd.github+json" \
@@ -79,7 +79,7 @@ runs:
     - name: Apply semver-sha to version
       shell: bash
       # Only run on main branch push (e.g. pull request merge).
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main
+      if: github.ref == 'refs/heads/main'
       run: |
         git config --global user.name "${{ inputs.ci-username }}"
         git config --global user.email "${{ inputs.ci-email }}"
