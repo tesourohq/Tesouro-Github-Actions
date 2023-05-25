@@ -28,6 +28,12 @@ inputs:
   path-to-version-patch:
     description: Path to kubernetes base deployment yaml.
     required: true
+  app-id:
+    description: App ID to use.
+    required: true
+  app-pem:
+    description: App pem to use.
+    required: true
 runs:
   using: composite
   steps:
@@ -35,8 +41,8 @@ runs:
       id: generate_token
       uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
       with:
-        app_id: ${{ env.ARGOCD_APPID }}
-        private_key: ${{ secrets.ARGOCD_APP_PEM }}
+        app_id: ${{ inputs.app-id }}
+        private_key: ${{ inputs.app-pem }}
 
     #We are locking the main branch so that the deployment can run without getting clobbered by the next.
     - name: Lock the main branch
