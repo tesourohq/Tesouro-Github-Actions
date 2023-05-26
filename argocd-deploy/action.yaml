@@ -62,13 +62,7 @@ runs:
         | jq '. += { "restrictions": null }' \
         | jq '.enforce_admins.enabled as $ea | .enforce_admins = $ea | .lock_branch.enabled as $lb | .lock_branch = $lb | .allow_fork_syncing.enabled as $afs | .allow_fork_syncing = $afs | .allow_force_pushes.enabled as $afp | .allow_force_pushes = $afp | .require_linear_history.enabled as $rlh | .require_linear_history = $rlh | .allow_deletions.enabled as $ad | .allow_deletions = $ad | .required_signatures.enabled as $rs | .required_signatures = $rs | .required_linear_history.enabled as $rlh | .required_linear_history = $rlh | .required_conversation_resolution.enabled as $rcr | .required_conversation_resolution = $rcr | .block_creations.enabled as $bc | .block_creations = $bc')
         echo $jsonbody
-        curl -s -L \
-          -X PUT \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: token $token"\
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/$repo/branches/main/protection \
-          -d $jsonbody
+        curl -s -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: token $token" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$repo/branches/main/protection -d $jsonbody
 
     - name: CheckoutRepo
       uses: actions/checkout@v3
