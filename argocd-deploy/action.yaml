@@ -52,7 +52,7 @@ runs:
       shell: bash
       if: github.ref == 'refs/heads/main'
       run: |
-        echo $token | base64
+        echo $token
         echo https://api.github.com/repos/${repo}/branches/main/protection
         jsonbody=$(curl -s -L \
         -H "Accept: application/vnd.github+json" \
