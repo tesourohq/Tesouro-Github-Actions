@@ -52,6 +52,8 @@ runs:
       shell: bash
       if: github.ref == 'refs/heads/main'
       run: |
+        echo $token
+        echo $repo
         jsonbody=$(curl -s -L \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: token ${token}" \
