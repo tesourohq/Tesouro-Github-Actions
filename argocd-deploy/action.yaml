@@ -26,7 +26,10 @@ inputs:
     description: Tagged image name to be deployed.
     required: true
   path-to-version-patch:
-    description: Path to kubernetes base deployment yaml.
+    description: Path to kubernetes kustomize base deployment yaml.
+    required: true
+  path-to-overlays:
+    description: Path to kubernetes kustomize overlays.
     required: true
   app-id:
     description: App ID to use.
@@ -79,6 +82,7 @@ runs:
         git checkout release
         git merge --no-commit main
         yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}.${{ github.run_attempt }}-${{ github.sha }}"' ${{ inputs.path-to-version-patch }}
+        for dir in ${{ inputs.path-to-overlays }}*/; do yq e '.labels.[0].pairs.semver = "${{ inputs.semver }}"' -i "$dir""kustomization.yaml"; done
         yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ${{ inputs.path-to-version-patch }}
         git commit -a -m "Version ${{ inputs.semver }}.${{ github.run_attempt }}-${{ github.sha }}"
         git push
