@@ -54,6 +54,11 @@ runs:
         token: ${{ inputs.github-token }}
         fetch-depth: 0
 
+    - name: Set short sha
+      shell: bash
+      id: shortsha
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
     # Commit and push.
     - name: Apply semver-sha to version
       shell: bash
@@ -72,9 +77,9 @@ runs:
       shell: bash
       if: github.ref == 'refs/heads/main' && inputs.path-to-db-overlays != '' && inputs.path-to-db-base != ''
       run: |
-        yq -i '.metadata.name = "payment-processing-database-job-${{github.run_id}}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}job.yaml
-        yq -i '.labels[0].pairs.app = "payment-processing-database-job-${{github.run_id}}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}kustomization.yaml
-        yq -i '.metadata.name = "payment-processing-database-job-${{github.run_id}}-${{github.run_attempt}}"' ${{ inputs.path-to-db-overlays }}prod/job.yaml
+        yq -i '.metadata.name = "payment-processing-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}job.yaml
+        yq -i '.labels[0].pairs.app = "payment-processing-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}kustomization.yaml
+        yq -i '.metadata.name = "payment-processing-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-overlays }}prod/job.yaml
 
     - name: Commit and push
       shell: bash
