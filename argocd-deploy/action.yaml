@@ -80,7 +80,7 @@ runs:
         git config --global user.name "${{ inputs.ci-username }}"
         git config --global user.email "${{ inputs.ci-email }}"
         git checkout release
-        git merge --no-commit main
+        git -X theirs merge --no-commit main
         yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}.${{ github.run_attempt }}-${{ github.sha }}"' ${{ inputs.path-to-version-patch }}
         for dir in ${{ inputs.path-to-overlays }}*/; do yq e '.labels.[1].pairs.semver = "${{ inputs.semver }}"' -i "$dir""kustomization.yaml"; done
         yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ${{ inputs.path-to-version-patch }}
