@@ -107,6 +107,7 @@ runs:
       
     - name: Archive the Docker Logs
       uses: actions/upload-artifact@v3
+      if: always()
       with:
         name: functional_test_docker_logs
         path: functional_test_docker_logs.txt
