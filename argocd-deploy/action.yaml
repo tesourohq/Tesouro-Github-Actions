@@ -84,7 +84,7 @@ runs:
     
     - name: Version db job
       shell: bash
-      if: github.ref == 'refs/heads/main' && inputs.path-to-db-overlays != '' && inputs.path-to-db-base != ''
+      if: github.ref == 'refs/heads/main' && inputs.path-to-db-overlays != '' && inputs.path-to-db-base != '' && inputs.service-name != ''
       run: |
         yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}job.yaml
         yq -i '.labels[0].pairs.app = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}kustomization.yaml
