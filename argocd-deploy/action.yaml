@@ -32,12 +32,6 @@ inputs:
   path-to-overlays:
     description: Path to kubernetes kustomize overlays.
     required: true
-  app-id:
-    description: App ID to use.
-    required: true
-  app-pem:
-    description: App pem to use.
-    required: true
   path-to-db-base:
     description: Path from the project root to the database migration kustomize base.
     required: false
