@@ -27,7 +27,8 @@ inputs:
     required: true
   path-to-version-patch:
     description: Path to kubernetes kustomize base deployment yaml.
-    required: true
+    required: false
+    default: ''
   path-to-overlays:
     description: Path to kubernetes kustomize overlays.
     required: true
@@ -42,6 +43,10 @@ inputs:
     required: false
     default: ''
   path-to-db-overlays:
+    description: Path from the project root to the database migration kustomize overlays.
+    required: false
+    default: ''
+  service-name:
     description: Path from the project root to the database migration kustomize overlays.
     required: false
     default: ''
@@ -69,17 +74,27 @@ runs:
         git config --global user.email "${{ inputs.ci-email }}"
         git checkout release
         git merge -X theirs --no-commit main
+
+    - name: Version microservice
+      shell: bash
+      if: github.ref == 'refs/heads/main' && inputs.path-to-version-patch != ''
+      run: |
         yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}.${{ github.run_attempt }}-${{ github.sha }}"' ${{ inputs.path-to-version-patch }}
-        for dir in ${{ inputs.path-to-overlays }}*/; do yq e '.labels.[1].pairs.semver = "${{ inputs.semver }}"' -i "$dir""kustomization.yaml"; done
         yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ${{ inputs.path-to-version-patch }}
     
-    - name: Version db name
+    - name: Version db job
       shell: bash
       if: github.ref == 'refs/heads/main' && inputs.path-to-db-overlays != '' && inputs.path-to-db-base != ''
       run: |
-        yq -i '.metadata.name = "payment-processing-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}job.yaml
-        yq -i '.labels[0].pairs.app = "payment-processing-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}kustomization.yaml
-        yq -i '.metadata.name = "payment-processing-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-overlays }}prod/job.yaml
+        yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}job.yaml
+        yq -i '.labels[0].pairs.app = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}kustomization.yaml
+        yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-overlays }}prod/job.yaml
+
+    - name: Version overlays
+      shell: bash
+      if: github.ref == 'refs/heads/main' && inputs.path-to-overlays != ''
+      run: |
+        for dir in ${{ inputs.path-to-overlays }}*/; do yq e '.labels.[1].pairs.semver = "${{ inputs.semver }}"' -i "$dir""kustomization.yaml"; done
 
     - name: Commit and push
       shell: bash
