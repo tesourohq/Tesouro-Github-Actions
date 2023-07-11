@@ -1,9 +1,6 @@
 name: Branch Locking
 description: Lock or unlock repo branches
 inputs:
-  argocd-application-name:
-    description: ArgoCD application name, must match the application manifest.
-    required: true
   app-id:
     description: Github APP ID with permissions for branch protections control.
     required: true
