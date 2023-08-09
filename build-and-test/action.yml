@@ -9,7 +9,7 @@ inputs:
     required: true
   dotnet-version:
     description: The version of .NET for Setup task
-    default: 7.0.*
+    default: 7.0.100
     required: false
   code-coverage:
     description: The code coverage lower and upper threshold percentages for badge and health indicators
