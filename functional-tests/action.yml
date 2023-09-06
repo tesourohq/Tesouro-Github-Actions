@@ -27,6 +27,9 @@ inputs:
   rover-flag:
     description: Flag indicating whether rover is running, and should be waited for.
     required: false
+  gh-packages-token:
+    description: Github packages token
+    required: false
 runs:
   using: composite
   steps:
@@ -73,6 +76,7 @@ runs:
         PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
         PROVIDER_APP_VERSION: ${{ inputs.sem-ver }}
         GIT_BRANCH: ${{ github.ref_name }}
+        GH_PACKAGES_TOKEN: ${{ inputs.gh-packages-token }}
       shell: bash
       run: |
         # Build test container and associated services (and run tests)
