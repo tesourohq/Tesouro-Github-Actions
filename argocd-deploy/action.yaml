@@ -67,7 +67,7 @@ runs:
         git config --global user.name "${{ inputs.ci-username }}"
         git config --global user.email "${{ inputs.ci-email }}"
         git checkout release
-        git merge -X theirs --no-commit main
+        git merge -Xtheirs --no-commit main
 
     - name: Version microservice
       shell: bash
