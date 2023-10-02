@@ -81,8 +81,7 @@ runs:
       if: github.ref == 'refs/heads/main' && inputs.path-to-db-overlays != '' && inputs.path-to-db-base != '' && inputs.service-name != ''
       run: |
         yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}job.yaml
-        yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-overlays }}prod/job.yaml
-        yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-overlays }}stage/job.yaml
+        for dir in ${{ inputs.path-to-db-overlays }}*/; do yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' "$dir""/job.yaml"; done
 
     - name: Version overlays
       shell: bash
