@@ -53,10 +53,13 @@ runs:
         token: ${{ inputs.github-token }}
         fetch-depth: 0
 
-    - name: Set short sha
+    - name: Set uid
       shell: bash
-      id: shortsha
-      run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      id: uid
+      run: |
+        uuid=$(uuidgen)
+        trunc_uuid=${uuid:0:4}
+        echo "short_uuid=$trunc_uuid" >> $GITHUB_OUTPUT
 
     # Commit and push.
     - name: Apply semver-sha to version
@@ -73,15 +76,8 @@ runs:
       shell: bash
       if: github.ref == 'refs/heads/main' && inputs.path-to-version-patch != ''
       run: |
-        yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}.${{ github.run_attempt }}-${{ github.sha }}"' ${{ inputs.path-to-version-patch }}
+        yq -i '.spec.template.metadata.labels.version = "${{ inputs.semver }}.${{ steps.uid.outputs.short_uuid }}"' ${{ inputs.path-to-version-patch }}
         yq -i '.spec.template.spec.containers[0].image = "${{ inputs.image-name }}"' ${{ inputs.path-to-version-patch }}
-    
-    - name: Version db job name
-      shell: bash
-      if: github.ref == 'refs/heads/main' && inputs.path-to-db-overlays != '' && inputs.path-to-db-base != '' && inputs.service-name != ''
-      run: |
-        yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' ${{ inputs.path-to-db-base }}job.yaml
-        for dir in ${{ inputs.path-to-db-overlays }}*/; do yq -i '.metadata.name = "${{ inputs.service-name }}-database-job-${{ steps.shortsha.outputs.sha_short }}-${{github.run_attempt}}"' "$dir""/job.yaml"; done
 
     - name: Version overlays
       shell: bash
@@ -94,7 +90,7 @@ runs:
       # Only run on main branch push (e.g. pull request merge).
       if: github.ref == 'refs/heads/main'
       run: |
-        git commit -a -m "Version ${{ inputs.semver }}.${{ github.run_attempt }}-${{ github.sha }}"
+        git commit -a -m "Version ${{ inputs.semver }}.${{ steps.uid.outputs.short_uuid }}"
         git push
 
     - name: Deploy
