@@ -25,6 +25,9 @@ inputs:
   aws-repository-name:
     description: AWS ECR repository name.
     required: true
+  gcloud-service-account:
+    description: Google Cloud service account
+    required: true
   docker-context:
     description: The context folder where the image is built
     required: true
@@ -42,21 +45,36 @@ outputs:
     value: ${{ inputs.sem-ver }}
   image-name:
     description: The full name of the image that was built and pushed.
-    value: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
+    value: gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
 runs:
   using: composite
   steps:
-    - name: Login to Dockerhub
-      uses: docker/login-action@v2
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-access-token }}
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
+    - name: Authorize with GCloud
+      id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        token_format: access_token
+        workload_identity_provider: projects/274784588410/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc-provider
+        service_account: ${{ inputs.gcloud-service-account }}
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+    - name: Login to GCR
+      uses: docker/login-action@v2
+      with:
+        registry: gcr.io
+        username: oauth2accesstoken
+        password: ${{ steps.auth.outputs.access_token }}
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -68,12 +86,18 @@ runs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    # a note here, the actions docker/metadata-action & docker/build-push-action were not built with building on arm architecture in mind. The environment
-    # file used specifies specific linux/amd64 items making building the container impossible (for now)
-    # we'll run our own command for now, but as GitHub Actions releases arm runners (and actions add support), we could switch back
-    - name: Build Arm Image
-      env:
-        REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        REPOSITORY: ${{ inputs.aws-repository-name }}
-      shell: bash
-      run: docker buildx build ${{ inputs.docker-context }} -f ${{ inputs.dockerfile-path }}/Dockerfile --build-arg GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }} --build-arg ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }} --tag $REGISTRY/$REPOSITORY/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }} --tag $REGISTRY/$REPOSITORY/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest --push --platform ${{ inputs.platform }}
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: ${{ inputs.docker-context }}
+        platforms: linux/arm64
+        push: true
+        file: ${{ inputs.dockerfile-path }}/Dockerfile
+        build-args: |
+          ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }}
+          GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }}
+        tags: |
+          ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
+          ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
+          gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
+          gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}      
