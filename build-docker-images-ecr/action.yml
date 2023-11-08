@@ -42,7 +42,7 @@ outputs:
     value: ${{ inputs.sem-ver }}
   image-name:
     description: The full name of the image that was built and pushed.
-    value: gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
+    value: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
 runs:
   using: composite
   steps:
@@ -76,4 +76,4 @@ runs:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: ${{ inputs.aws-repository-name }}
       shell: bash
-      run: docker buildx build ${{ inputs.docker-context }} -f ${{ inputs.dockerfile-path }}/Dockerfile --build-arg GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }} --build-arg ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }} --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }} --tag gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest --push --platform ${{ inputs.platform }}
+      run: docker buildx build ${{ inputs.docker-context }} -f ${{ inputs.dockerfile-path }}/Dockerfile --build-arg GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }} --build-arg ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }} --tag $REGISTRY/$REPOSITORY/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }} --tag $REGISTRY/$REPOSITORY/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest --push --platform ${{ inputs.platform }}
