@@ -10,9 +10,6 @@ inputs:
   pacts-path:
     description: Path relative to root where the pact files should be downloaded to
     required: false
-  gcloud-service-account:
-    description: Google Cloud service account
-    required: true
   pact-broker-token:
     description: Read/Write token that can be used to deploy/verify pacts at tesouro.pactflow.io
     required: false
@@ -30,23 +27,27 @@ inputs:
   gh-packages-token:
     description: Github packages token
     required: false
+  aws-github-role:
+    description: AWS role to assume
+    required: true
+  aws-region:
+    description: AWS region ECR repository is in.
+    required: true
+  aws-repository-name:
+    description: AWS ECR repository name.
+    required: true
 runs:
   using: composite
   steps:
-    - name: Authorize with GCloud
-      id: 'auth'
-      uses: 'google-github-actions/auth@v0'
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
       with:
-        token_format: access_token
-        workload_identity_provider: projects/274784588410/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc-provider
-        service_account: ${{ inputs.gcloud-service-account }}
+        role-to-assume: ${{ inputs.aws-github-role }}
+        aws-region: ${{ inputs.aws-region }}
 
-    - name: Login to GCR
-      uses: docker/login-action@v2
-      with:
-        registry: gcr.io
-        username: oauth2accesstoken
-        password: ${{ steps.auth.outputs.access_token }}
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
     - name: Login to Dockerhub
       uses: docker/login-action@v2
@@ -71,8 +72,8 @@ runs:
     - name: Start Functional Tests
       working-directory: ./test
       env:
-        UNDERTEST_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
-        UNDERTEST_PACTS_IMAGE: "gcr.io/tesouro-cloud/${{ inputs.pacts-image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+        UNDERTEST_IMAGE: "${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+        UNDERTEST_PACTS_IMAGE: "${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.pacts-image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
         PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
         PROVIDER_APP_VERSION: ${{ inputs.sem-ver }}
         GIT_BRANCH: ${{ github.ref_name }}
