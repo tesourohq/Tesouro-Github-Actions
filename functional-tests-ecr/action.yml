@@ -1,0 +1,146 @@
+name: Functional tests
+description: Run And Report Functional Tests
+inputs:
+  sem-ver:
+    description: Version of the package
+    required: true
+  image-name:
+    description: Base image name to store in GCR
+    required: true
+  pacts-path:
+    description: Path relative to root where the pact files should be downloaded to
+    required: false
+  pact-broker-token:
+    description: Read/Write token that can be used to deploy/verify pacts at tesouro.pactflow.io
+    required: false
+  pact-provider-verification:
+    description: Set to true if we want to generate results from pact provider verification
+    required: false
+  dockerhub-username:
+    description: The Dockerhub username for the account that will pull third party images.
+    required: true
+  dockerhub-access-token:
+    description: The PAT for the Dockerhub account.
+  rover-flag:
+    description: Flag indicating whether rover is running, and should be waited for.
+    required: false
+  gh-packages-token:
+    description: Github packages token
+    required: false
+  aws-github-role:
+    description: AWS role to assume
+    required: true
+  aws-region:
+    description: AWS region ECR repository is in.
+    required: true
+  aws-repository-name:
+    description: AWS ECR repository name.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws-github-role }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Login to Dockerhub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-access-token }}
+
+    - name: Clean up existing results
+      shell: bash
+      run: sudo rm -rf ./test/tests/bin
+      
+    - name: Download pact from this build
+      uses: actions/download-artifact@v3
+      if: ${{ inputs.pacts-path }}
+      with:
+        name: pact-file
+        path: ${{ inputs.pacts-path }}
+        
+    # Here, we spin up the container detached. We used to use --exit-code-from, but exit once a specific container was done, but that
+    # was recently changed to exit when ANY container was done so in case we have startup or setup containers, we'll do this in a
+    # detached fashion :-)
+    - name: Start Functional Tests
+      working-directory: ./test
+      env:
+        UNDERTEST_IMAGE: "${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+        UNDERTEST_PACTS_IMAGE: "${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.pacts-image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+        PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
+        PROVIDER_APP_VERSION: ${{ inputs.sem-ver }}
+        GIT_BRANCH: ${{ github.ref_name }}
+        GH_PACKAGES_TOKEN: ${{ inputs.gh-packages-token }}
+      shell: bash
+      run: |
+        # Build test container and associated services (and run tests)
+        export CLOUDSDK_PYTHON=python2
+        docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} up --build --force-recreate -d
+
+    # Here, we ask docker to wait until the Jest test container is done running
+    - name: Wait on Functional tests
+      shell: bash
+      run: docker wait test_${{ github.job }}-test-1
+      
+    - name: Wait on Pact Verifier
+      shell: bash
+      if: ${{ inputs.pact-broker-token }}
+      run: docker wait test_${{ github.job }}-pact-verifier-1
+      
+    - name: Wait on Rover
+      shell: bash
+      if: ${{ inputs.rover-flag }}
+      run: docker wait test_${{ github.job }}-rover-1
+      
+    - name: Archive swagger file
+      uses: actions/upload-artifact@v3
+      with:
+        name: swagger-file
+        path: test/tests/bin/results/swagger.json
+        
+    - name: Print Docker Logs
+      shell: bash
+      if: always()
+      run: docker compose -p test_${{ github.job }} logs -t > functional_test_docker_logs.txt
+      
+    - name: Archive the Docker Logs
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: functional_test_docker_logs
+        path: functional_test_docker_logs.txt
+
+    # should anything go wrong, we always want to nuke the containers and all orphans (startup containers)
+    - name: Shut Down Containers
+      if: always()
+      working-directory: ./test
+      shell: bash
+      run: docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
+
+    - name: Report Functional Test Results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Functional Tests
+        path: test/tests/bin/results/*.xml
+        reporter: jest-junit
+
+    - name: Report Pact Provider Results
+      uses: dorny/test-reporter@v1
+      if: ${{ inputs.pact-provider-verification }}
+      with:
+        name: Pact Provider Verification
+        path: test/tests/bin/pact/*.xml
+        reporter: java-junit
+
+    - name: Clean up results
+      if: always()
+      shell: bash
+      run: sudo rm -rf ./test/tests/bin
