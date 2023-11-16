@@ -90,7 +90,7 @@ runs:
       uses: docker/build-push-action@v5
       with:
         context: ${{ inputs.docker-context }}
-        platforms: linux/arm64
+        platforms: ${{ inputs.platform }}
         push: true
         file: ${{ inputs.dockerfile-path }}/Dockerfile
         build-args: |
