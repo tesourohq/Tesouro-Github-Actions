@@ -4,9 +4,6 @@ inputs:
   image-name:
     description: Base image name to store in GCR
     required: true
-  gcloud-service-account:
-    description: Google Cloud service account
-    required: true
   pact-broker-token:
     description: Read/Write token that can be used to deploy/verify pacts at tesouro.pactflow.io
     required: false
@@ -50,7 +47,7 @@ runs:
       uses: aws-actions/amazon-ecr-login@v2
 
     - name: Login to Dockerhub
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-access-token }}
