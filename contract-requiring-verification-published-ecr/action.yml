@@ -1,9 +1,6 @@
 name: Verify Contract
 description: Run provider verification for a pact
 inputs:
-  sem-ver:
-    description: Version of the package
-    required: true
   image-name:
     description: Base image name to store in GCR
     required: true
@@ -64,7 +61,7 @@ runs:
     - name: Start Provider Verification Tests
       working-directory: ./test
       env:
-        UNDERTEST_IMAGE: "${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}"
+        UNDERTEST_IMAGE: "${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}:latest"
         PACT_BROKER_TOKEN: ${{ inputs.pact-broker-token }}
         PROVIDER_APP_VERSION: ${{ inputs.provider-version_number }}
         GIT_BRANCH: ${{ github.ref_name }}
