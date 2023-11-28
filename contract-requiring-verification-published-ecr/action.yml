@@ -2,7 +2,7 @@ name: Verify Contract
 description: Run provider verification for a pact
 inputs:
   image-name:
-    description: Base image name to store in GCR
+    description: Base image name to store in ECR
     required: true
   pact-broker-token:
     description: Read/Write token that can be used to deploy/verify pacts at tesouro.pactflow.io
