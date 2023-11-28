@@ -25,9 +25,6 @@ inputs:
   aws-repository-name:
     description: AWS ECR repository name.
     required: true
-  gcloud-service-account:
-    description: Google Cloud service account
-    required: true
   docker-context:
     description: The context folder where the image is built
     required: true
@@ -61,21 +58,6 @@ runs:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-access-token }}
 
-    - name: Authorize with GCloud
-      id: 'auth'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        token_format: access_token
-        workload_identity_provider: projects/274784588410/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-oidc-provider
-        service_account: ${{ inputs.gcloud-service-account }}
-
-    - name: Login to GCR
-      uses: docker/login-action@v2
-      with:
-        registry: gcr.io
-        username: oauth2accesstoken
-        password: ${{ steps.auth.outputs.access_token }}
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -99,5 +81,3 @@ runs:
         tags: |
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
-          gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
-          gcr.io/tesouro-cloud/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
