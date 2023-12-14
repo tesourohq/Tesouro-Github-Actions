@@ -96,14 +96,9 @@ runs:
         image: local://${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
         only-severities: critical
         only-fixed: true
-        sarif-file: 'scout-results.sarif'
+        summary: true
+        write-comment: true
         exit-code: true
-    
-    - name: Post Scan Results - Docker Scout
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
-      with:
-        sarif_file: 'scout-results.sarif'
     
     - name: Scan Image - Trivy
       uses: aquasecurity/trivy-action@master
@@ -113,15 +108,7 @@ runs:
         image-ref: local://${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
         severity: CRITICAL
         ignore-unfixed: true
-        format: 'sarif'
-        output: 'trivy-results.sarif'
         exit-code: '1'
-    
-    - name: Post Scan Results - Trivy
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
 
     # This will not build the image again. It sees the local image and just pushes that (ref: https://docs.docker.com/build/ci/github-actions/test-before-push/).
     - name: Push
