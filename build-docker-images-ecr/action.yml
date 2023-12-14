@@ -84,7 +84,7 @@ runs:
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
     
-    - name: Scan Image - Docker Scout
+    - name: Scan Image
       id: scan
       uses: docker/scout-action@v1
       with:
@@ -102,6 +102,8 @@ runs:
       shell: bash
       run: |
         cat scout-results.json >> $GITHUB_STEP_SUMMARY
+    
+    # TODO: Could create and upload and SBOM here?
 
     # This will not build the image again. It sees the local image and just pushes that (ref: https://docs.docker.com/build/ci/github-actions/test-before-push/).
     - name: Push
