@@ -101,7 +101,7 @@ runs:
       id: post-results
       shell: bash
       run: |
-        echo -e "Scan Results\n\n" && cat scout-results.json | jq '.runs[].results?' >> $GITHUB_STEP_SUMMARY
+        echo ":mag: ### Scan Results: <br><br>" && cat scout-results.json | jq '.runs[].results?' >> $GITHUB_STEP_SUMMARY
     
     # TODO: Could create and upload and SBOM here?
 
