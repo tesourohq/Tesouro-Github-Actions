@@ -90,8 +90,6 @@ runs:
         image: local://${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
         only-severities: critical
         only-fixed: true
-        write-comment: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
         sarif-file: 'scout-results.sarif'
         exit-code: true
     
