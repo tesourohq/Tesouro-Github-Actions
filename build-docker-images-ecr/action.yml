@@ -94,7 +94,14 @@ runs:
         only-fixed: true
         summary: true
         write-comment: true
+        sarif-file: scout-results.json
         exit-code: true
+    
+    - name: Post Sarif File
+      id: post-results
+      shell: bash
+      run: |
+        cat scout-results.json >> $GITHUB_STEP_SUMMARY
 
     # This will not build the image again. It sees the local image and just pushes that (ref: https://docs.docker.com/build/ci/github-actions/test-before-push/).
     - name: Push
