@@ -81,6 +81,11 @@ runs:
         tags: |
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
+    
+    - name: Where My Images At?
+      shell: bash
+      run: |
+        docker images
          
     # TODO: I want this step to fail if critical CVEs are found.
     - name: Scan Image - Docker Scout
@@ -91,6 +96,7 @@ runs:
         only-severities: critical
         only-fixed: true
         sarif-file: 'scout-results.sarif'
+        summary: true
         exit-code: true
     
     - name: Post Scan Results - Docker Scout
