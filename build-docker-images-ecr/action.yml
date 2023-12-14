@@ -68,16 +68,65 @@ runs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build and push
+    - name: Build
+      uses: docker/build-push-action@v5
+      with:
+        context: ${{ inputs.docker-context }}
+        platforms: ${{ inputs.platform }}
+        push: false
+        file: ${{ inputs.dockerfile-path }}/Dockerfile
+        build-args: |
+          ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }}
+          GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }}
+        tags: |
+          ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
+          ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
+         
+    # TODO: I want this step to fail if critical CVEs are found.
+    - name: Scan Image - Docker Scout
+      uses: docker/scout-action@v1
+      with:
+        command: cves
+        image: local://${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
+        only-severities: critical
+        only-fixed: true
+        write-comment: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        sarif-file: 'scout-results.sarif'
+        exit-code: true
+    
+    - name: Post Scan Results - Docker Scout
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'scout-results.sarif'
+    
+    - name: Scan Image - Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: image
+        scanners: vuln
+        image-ref: local://${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
+        severity: CRITICAL
+        ignore-unfixed: true
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        exit-code: '1'
+    
+    - name: Post Scan Results - Trivy
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    # This will not build the image again. It sees the local image and just pushes that (ref: https://docs.docker.com/build/ci/github-actions/test-before-push/).
+    - name: Push
       uses: docker/build-push-action@v5
       with:
         context: ${{ inputs.docker-context }}
         platforms: ${{ inputs.platform }}
         push: true
         file: ${{ inputs.dockerfile-path }}/Dockerfile
-        build-args: |
-          ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }}
-          GH_PACKAGES_TOKEN=${{ inputs.gh-packages-token }}
         tags: |
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
