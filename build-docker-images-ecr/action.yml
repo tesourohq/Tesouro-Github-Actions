@@ -97,7 +97,6 @@ runs:
         only-severities: critical
         only-fixed: true
         sarif-file: 'scout-results.sarif'
-        summary: true
         exit-code: true
     
     - name: Post Scan Results - Docker Scout
