@@ -88,7 +88,7 @@ runs:
       id: scan
       uses: docker/scout-action@v1
       with:
-        command: cves
+        command: quickview,cves,sbom
         image: local://${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
         only-severities: critical
         only-fixed: true
@@ -97,15 +97,16 @@ runs:
         sarif-file: scout-results.json
         exit-code: true
     
-    # BUG: WHY WILL IT NOT FORMAT???
     - name: Post Sarif File
       id: post-results
       shell: bash
       run: |
         echo '---' >> $GITHUB_STEP_SUMMARY
-        echo ':mag: ###Scan Results: <br><br>' >> $GITHUB_STEP_SUMMARY
+        echo ':mag: Scan Results: <br><br>' >> $GITHUB_STEP_SUMMARY
         cat scout-results.json | jq '.runs[].results?' >> $GITHUB_STEP_SUMMARY
         echo '---' >> $GITHUB_STEP_SUMMARY
+    
+    
     
     # TODO: Could create and upload and SBOM here?
 
