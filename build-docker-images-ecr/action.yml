@@ -97,11 +97,15 @@ runs:
         sarif-file: scout-results.json
         exit-code: true
     
+    # BUG: WHY WILL IT NOT FORMAT???
     - name: Post Sarif File
       id: post-results
       shell: bash
       run: |
-        echo ':mag: ### Scan Results: <br><br>' >> $GITHUB_STEP_SUMMARY && cat scout-results.json | jq '.runs[].results?' >> $GITHUB_STEP_SUMMARY
+        echo '---' >> $GITHUB_STEP_SUMMARY
+        echo ':mag: ###Scan Results: <br><br>' >> $GITHUB_STEP_SUMMARY
+        cat scout-results.json | jq '.runs[].results?' >> $GITHUB_STEP_SUMMARY
+        echo '---' >> $GITHUB_STEP_SUMMARY
     
     # TODO: Could create and upload and SBOM here?
 
