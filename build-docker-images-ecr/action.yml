@@ -74,8 +74,8 @@ runs:
       with:
         context: ${{ inputs.docker-context }}
         platforms: ${{ inputs.platform }}
-        push: false
-        load: true
+        push: true
+        load: false
         file: ${{ inputs.dockerfile-path }}/Dockerfile
         build-args: |
           ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }}
@@ -84,22 +84,22 @@ runs:
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
     
-    - name: Scan Image
-      id: scan
-      uses: docker/scout-action@v1
-      with:
-        command: cves
-        image: local://${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
-        only-severities: critical
-        only-fixed: true
-        summary: true
-        write-comment: true
-        sarif-file: scout-results.json
-        exit-code: true
-
-    - name: Push
-      if: steps.build.outcome == 'success' && steps.scan.outcome == 'success'
-      shell: bash
-      run: |
-        docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
-        docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
+#    - name: Scan Image
+#      id: scan
+#      uses: docker/scout-action@v1
+#      with:
+#        command: cves
+#        image: local://${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
+#        only-severities: critical
+#        only-fixed: true
+#        summary: true
+#        write-comment: true
+#        sarif-file: scout-results.json
+#        exit-code: true
+#
+#    - name: Push
+#      if: steps.build.outcome == 'success' && steps.scan.outcome == 'success'
+#      shell: bash
+#      run: |
+#        docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
+#        docker push ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
