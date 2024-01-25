@@ -48,7 +48,9 @@ runs:
       run: aws s3 sync s3://${{ inputs.s3-bucket-name }} schema-latest
     - name: Edit supergraph-schema
       shell: bash
-      run: yq -i ".subgraphs.${{inputs.test-artifact-name}}.schema.file = schema/${{inputs.test-artifact-name}}-subgraph-ci.graphql" supergraph-config.yml
+      run: |
+        yqvar="schema/${{inputs.test-artifact-name}}-subgraph-ci.graphql"
+        yq -i ".subgraphs.${{inputs.test-artifact-name}}.schema.file = env(yqvar)" supergraph-config.yml
     - name: Generate Supergraph from latest artifacts
       shell: bash
       run: docker run -v ${{github.workspace}}/schema-latest:/schema -v ${{ github.workspace }}/supergraph-config.yml:/dist/config/supergraph-config.yml ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.rover-image-name }}:latest
