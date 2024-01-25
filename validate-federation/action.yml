@@ -45,7 +45,7 @@ runs:
       uses: aws-actions/amazon-ecr-login@v2
     - name: Download Graphql Subgraphs from S3
       shell: bash
-      run: aws s3 sync s3://${{ inputs.s3-bucket-name }} schema-latest
+      run: aws s3 sync s3://${{ inputs.s3-bucket-name }} ${{ github.workspace }}/schema-latest
     - name: Edit supergraph-schema
       shell: bash
       run: |
@@ -56,7 +56,7 @@ runs:
       run: docker run -v ${{github.workspace}}/schema-latest:/schema -v ${{ github.workspace }}/supergraph-config.yml:/dist/config/supergraph-config.yml ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.rover-image-name }}:latest
     - name: Copy test artifact schema to VCS schema folder
       shell: bash
-      run: cp /schema-latest/${{inputs.test-artifact-name}}-ci.graphql /schema/
+      run: cp ${{ github.workspace }}/schema-latest/${{inputs.test-artifact-name}}-ci.graphql /schema/
     - name: Generate Supergraph from vcs artifacts
       shell: bash
       run: docker run -v ${{github.workspace}}/schema:/schema -v ${{ github.workspace }}/supergraph-config.yml:/dist/config/supergraph-config.yml${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.rover-image-name }}:latest
