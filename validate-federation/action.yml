@@ -8,9 +8,9 @@ inputs:
   s3-bucket-name:
     description: s3 bucket for graphql schema artifacts
     required: true
-  gh-packages-token:
-    description: Github packages token
-    required: false
+  gh-token:
+    description: Github token
+    required: true
   aws-repository-name:
     description: AWS ECR repository name.
     required: true
@@ -34,6 +34,7 @@ runs:
       with:
         fetch-depth: 1
         repository: ${{ inputs.graphql-router-repository-name }}
+        token: ${{ inputs.gh-token }}
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
