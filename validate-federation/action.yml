@@ -1,0 +1,56 @@
+name: Validate Federation
+description: Validate Graphql Schemas for Apollo Federation
+inputs:
+  test-artifact-name:
+    description: s3 name of graphql schema artifact to test
+    required: true
+  s3-bucket-name:
+    description: s3 bucket for graphql schema artifacts
+    required: true
+  gh-token:
+    description: Github token
+    required: true
+  aws-repository-name:
+    description: AWS ECR repository name.
+    required: true
+  aws-github-role:
+    description: AWS role to assume
+    required: true
+  rover-image-name:
+    description: Rover image name
+    required: true
+  aws-region:
+    description: AWS region ECR repository is in.
+    required: true
+  graphql-router-repository-name:
+    description: GraphQL repository name.
+    required: true
+  sem-ver:
+    description: Sem-ver.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws-github-role }}
+        aws-region: ${{ inputs.aws-region }}
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        repository: ${{ inputs.graphql-router-repository-name }}
+        token: ${{ inputs.gh-token }}
+    - name: Validate
+      shell: bash
+      run: |
+        aws s3 sync s3://${{ inputs.s3-bucket-name }} ${{ github.workspace }}/schema-latest
+        yqvar="/schema/ci-${{ inputs.sem-ver }}-${{inputs.test-artifact-name}}-subgraph.graphql"
+        myYQvar="${yqvar}" yq -i ".subgraphs.${{inputs.test-artifact-name}}.schema.file = env(myYQvar)" ${{github.workspace}}/supergraph-config.yml
+        docker run -v ${{github.workspace}}/schema-latest:/schema -v ${{ github.workspace }}/supergraph-config.yml:/dist/config/supergraph-config.yml ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.rover-image-name }}:latest
+        cp ${{ github.workspace }}/schema-latest/${{inputs.test-artifact-name}}-subgraph-ci.graphql ${{ github.workspace }}/schema/ci-${{ inputs.sem-ver }}-${{inputs.test-artifact-name}}-subgraph.graphql
+        docker run -v ${{github.workspace}}/schema:/schema -v ${{ github.workspace }}/supergraph-config.yml:/dist/config/supergraph-config.yml ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.rover-image-name }}:latest
