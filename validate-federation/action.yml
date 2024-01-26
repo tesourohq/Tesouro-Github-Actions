@@ -50,5 +50,5 @@ runs:
         yqvar="schema/${{inputs.test-artifact-name}}-subgraph-ci.graphql"
         myYQvar="${yqvar}" yq -i ".subgraphs.${{inputs.test-artifact-name}}.schema.file = env(myYQvar)" supergraph-config.yml
         docker run -v ${{github.workspace}}/schema-latest:/schema -v ${{ github.workspace }}/supergraph-config.yml:/dist/config/supergraph-config.yml ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.rover-image-name }}:latest
-        cp ${{ github.workspace }}/schema-latest/${{inputs.test-artifact-name}}-subgraph-ci.graphql /schema/${{inputs.test-artifact-name}}-subgraph-ci.graphql
+        cp ${{ github.workspace }}/schema-latest/${{inputs.test-artifact-name}}-subgraph-ci.graphql ${{ github.workspace }}/schema/${{inputs.test-artifact-name}}-subgraph-ci.graphql
         docker run -v ${{github.workspace}}/schema:/schema -v ${{ github.workspace }}/supergraph-config.yml:/dist/config/supergraph-config.yml${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.rover-image-name }}:latest
