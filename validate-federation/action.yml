@@ -46,6 +46,7 @@ runs:
     - name: Validate
       shell: bash
       run: |
+        ls ${{ github.workspace }}
         aws s3 sync s3://${{ inputs.s3-bucket-name }} ${{ github.workspace }}/schema-latest
         yqvar="schema/${{inputs.test-artifact-name}}-subgraph-ci.graphql"
         myYQvar="${yqvar}" yq -i ".subgraphs.${{inputs.test-artifact-name}}.schema.file = env(myYQvar)" supergraph-config.yml
