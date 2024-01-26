@@ -43,6 +43,8 @@ runs:
         fetch-depth: 1
         repository: ${{ inputs.graphql-router-repository-name }}
         token: ${{ inputs.gh-token }}
+    - name: Validate
+      shell: bash
       run: |
         aws s3 sync s3://${{ inputs.s3-bucket-name }} ${{ github.workspace }}/schema-latest
         yqvar="schema/${{inputs.test-artifact-name}}-subgraph-ci.graphql"
