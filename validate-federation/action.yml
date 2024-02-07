@@ -48,7 +48,7 @@ runs:
     - name: Validate-against-latest
       shell: bash
       run: |
-        echo '### Validation against latest! 🚀' >> $GITHUB_STEP_SUMMARY
+        echo '### Validation against latest schema! 🚀' >> $GITHUB_STEP_SUMMARY
         aws s3 sync s3://${{ inputs.s3-bucket-name }} ${{ github.workspace }}/schema-latest
         yqvar="/schema/ci-${{ inputs.sem-ver }}-${{inputs.test-artifact-name}}-subgraph.graphql"
         myYQvar="${yqvar}" yq -i ".subgraphs.${{inputs.test-artifact-name}}.schema.file = env(myYQvar)" ${{github.workspace}}/supergraph-config.yml
