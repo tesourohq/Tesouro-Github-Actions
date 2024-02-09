@@ -80,9 +80,3 @@ runs:
       with:
         name: deployed-supergraph-schema.graphql
         path: ${{github.workspace}}/schema/supergraph-schema.graphql
-    - name: supergraph-diff
-      uses: agu-z/gql-diff-action@v2
-      with:
-        token: ${{ inputs.gh-token }}
-        old-schema: "${{github.workspace}}/schema/supergraph-schema.graphql"
-        new-schema: "${{github.workspace}}/schema-latest/supergraph-schema.graphql"
