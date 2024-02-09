@@ -48,8 +48,9 @@ runs:
     - name: Validate-against-latest
       shell: bash
       run: |
+        echo '---' >> $GITHUB_STEP_SUMMARY
         echo '### **Validation against latest schema!** 🚀' >> $GITHUB_STEP_SUMMARY
-        echo '---   ' >> $GITHUB_STEP_SUMMARY
+        echo '---' >> $GITHUB_STEP_SUMMARY
         aws s3 sync s3://${{ inputs.s3-bucket-name }} ${{ github.workspace }}/schema-latest
         yqvar="/schema/ci-${{ inputs.sem-ver }}-${{inputs.test-artifact-name}}-subgraph.graphql"
         myYQvar="${yqvar}" yq -i ".subgraphs.${{inputs.test-artifact-name}}.schema.file = env(myYQvar)" ${{github.workspace}}/supergraph-config.yml
@@ -57,6 +58,7 @@ runs:
         docker logs -f latest &> ${{github.workspace}}/schema-latest/federate-latest.logs
         cat ${{github.workspace}}/schema-latest/federate-latest.logs
         cat ${{github.workspace}}/schema-latest/federate-latest.logs >> $GITHUB_STEP_SUMMARY
+        echo '   ' >> $GITHUB_STEP_SUMMARY
     - name: Archive generated supergraph-latest
       uses: actions/upload-artifact@v4
       with:
@@ -65,8 +67,9 @@ runs:
     - name: Validate-against-deployed
       shell: bash
       run: |
+        echo '---' >> $GITHUB_STEP_SUMMARY
         echo '### **Validation against deployed schema!** 🚀' >> $GITHUB_STEP_SUMMARY
-        echo '---   ' >> $GITHUB_STEP_SUMMARY
+        echo '---' >> $GITHUB_STEP_SUMMARY
         cp ${{ github.workspace }}/schema-latest/ci-${{ inputs.sem-ver }}-${{inputs.test-artifact-name}}-subgraph.graphql ${{ github.workspace }}/schema/ci-${{ inputs.sem-ver }}-${{inputs.test-artifact-name}}-subgraph.graphql
         docker run --name deployed -d -v ${{github.workspace}}/schema:/schema -v ${{ github.workspace }}/supergraph-config.yml:/dist/config/supergraph-config.yml ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.rover-image-name }}:latest
         docker logs -f deployed &> ${{github.workspace}}/schema/federate-deployed.logs
