@@ -4,8 +4,11 @@ inputs:
   argocd-application-name:
     description: ArgoCD application name, must match the application manifest.
     required: true
-  argocd-apikey:
-    description: ArgoCD service account api-key.
+  argocd-ci-username:
+    description: The username for the ArgoCD account that calls sync for stage.
+    required: true
+  argocd-ci-password:
+    description: The password for the ArgoCD account that calls sync for stage.
     required: true
   argocd-host:
     description: ArgoCD host.
