@@ -90,4 +90,6 @@ runs:
       id: argocd-deploy
       shell: bash
       run: |
-        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Authorization: Bearer ${{ inputs.argocd-apikey }}" | jq
+        TOKEN=$( curl https://argo.tesouro.com/api/v1/session -d $'{"username":"${{inputs.argo-username}}","password":"${{inputs.argo-password}}"}' | jq .token)
+        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Authorization: Bearer $TOKEN" | jq
+      
