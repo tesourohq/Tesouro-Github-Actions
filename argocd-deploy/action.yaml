@@ -93,6 +93,6 @@ runs:
       id: argocd-deploy
       shell: bash
       run: |
-        TOKEN=$( curl https://argo.tesouro.com/api/v1/session -H "Content-Type: application/json" -d "{"username":"${{ inputs.argo-ci-username }}","password":"${{ inputs.argo-ci-password }}"}" | jq -r ".token" )
+        export TOKEN=$( curl https://argo.tesouro.com/api/v1/session -H "Content-Type: application/json" -d "{"username":"${{ inputs.argo-ci-username }}","password":"${{ inputs.argo-ci-password }}"}" | jq -r ".token" )
         curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" | jq
       
