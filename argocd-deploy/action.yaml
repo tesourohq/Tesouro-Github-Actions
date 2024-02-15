@@ -4,10 +4,10 @@ inputs:
   argocd-application-name:
     description: ArgoCD application name, must match the application manifest.
     required: true
-  argocd-ci-username:
+  argo-ci-username:
     description: The username for the ArgoCD account that calls sync for stage.
     required: true
-  argocd-ci-password:
+  argo-ci-password:
     description: The password for the ArgoCD account that calls sync for stage.
     required: true
   argocd-host:
@@ -93,6 +93,10 @@ runs:
       id: argocd-deploy
       shell: bash
       run: |
-        TOKEN=$( curl https://argo.tesouro.com/api/v1/session -d $'{"username":"${{inputs.argo-ci-username}}","password":"${{inputs.argo-ci-password}}"}' | jq -r ".token" )
-        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Authorization: Bearer $TOKEN" | jq
+        USER_NAME=${{ inputs.argo-ci-username }}
+        PASSWORD=${{ inputs.argo-ci-password }}
+        ARGOCD_SERVER=${{ inputs.argocd-host }}
+        JSON=$(jq -c -n --arg username "$USER_NAME" --arg password "$PASSWORD" '$ARGS.named')
+        TOKEN=$(curl -k $ARGOCD_SERVER/api/v1/session -H "Content-Type: application/json" -d "$JSON" | jq -r ".token")
+        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" | jq
       
