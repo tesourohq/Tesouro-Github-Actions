@@ -98,6 +98,5 @@ runs:
         ARGOCD_SERVER=${{ inputs.argocd-host }}
         JSON=$(jq -c -n --arg username "$USER_NAME" --arg password "$PASSWORD" '$ARGS.named')
         TOKEN=$(curl -k $ARGOCD_SERVER/api/v1/session -H "Content-Type: application/json" -d "$JSON" | jq -r ".token")
-        echo $TOKEN
         curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" | jq
       
