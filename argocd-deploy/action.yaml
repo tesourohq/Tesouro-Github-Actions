@@ -93,7 +93,7 @@ runs:
       id: argocd-deploy
       shell: bash
       run: |
-        USERNAME=${{ inputs.argo-ci-username }}
+        USER_NAME=${{ inputs.argo-ci-username }}
         PASSWORD=${{ inputs.argo-ci-password }}
         ARGOCD_SERVER=${{ inputs.argocd-host }}
         JSON=$(jq -c -n --arg username "$USER_NAME" --arg password "$PASSWORD" '$ARGS.named')
