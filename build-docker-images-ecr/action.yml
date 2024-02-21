@@ -76,6 +76,7 @@ runs:
         platforms: ${{ inputs.platform }}
         push: true
         load: false
+        provenance: false
         file: ${{ inputs.dockerfile-path }}/Dockerfile
         build-args: |
           ASSEMBLY_VERSION=${{ inputs.AssemblySemVer }}
