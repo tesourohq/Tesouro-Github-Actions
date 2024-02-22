@@ -132,6 +132,12 @@ runs:
         path: test/tests/bin/results/*.xml
         reporter: jest-junit
 
+    - name: Report BDD Test Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: cucumber-results
+        path: test/tests/bin/results/cucumber-report.html
+
     - name: Report Pact Provider Results
       uses: dorny/test-reporter@v1
       if: ${{ inputs.pact-provider-verification }}
