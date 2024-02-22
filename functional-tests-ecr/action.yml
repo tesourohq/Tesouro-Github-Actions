@@ -50,7 +50,7 @@ runs:
       uses: aws-actions/amazon-ecr-login@v2
 
     - name: Login to Dockerhub
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-access-token }}
@@ -60,7 +60,7 @@ runs:
       run: sudo rm -rf ./test/tests/bin
       
     - name: Download pact from this build
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       if: ${{ inputs.pacts-path }}
       with:
         name: pact-file
@@ -100,7 +100,7 @@ runs:
       run: docker wait test_${{ github.job }}-rover-1
       
     - name: Archive swagger file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: swagger-file
         path: test/tests/bin/results/swagger.json
@@ -111,7 +111,7 @@ runs:
       run: docker compose -p test_${{ github.job }} logs -t > functional_test_docker_logs.txt
       
     - name: Archive the Docker Logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: functional_test_docker_logs
