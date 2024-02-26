@@ -127,6 +127,14 @@ runs:
       shell: bash
       run: docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
 
+    - name: Report BDD Functional Test Results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Functional BDD Tests
+        path: test/tests/bin/results/bdd/*.xml
+        reporter: java-junit
+
     - name: Report Functional Test Results
       uses: dorny/test-reporter@v1
       if: always()
