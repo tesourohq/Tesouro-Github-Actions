@@ -36,6 +36,10 @@ inputs:
   aws-repository-name:
     description: AWS ECR repository name.
     required: true
+  bdd-flag:
+    description: Flag indicating whether behavioral tests are running, and should be waited for
+    required: false
+    default: 'false'
 runs:
   using: composite
   steps:
@@ -89,6 +93,11 @@ runs:
       shell: bash
       run: docker wait test_${{ github.job }}-test-1
       
+    - name: Wait on BDD Tests (Cucumber)
+      shell: bash
+      if: ${{ inputs.bdd-flag == 'true' }}
+      run: docker wait test_${{ github.job }}-cucumber-test-1
+
     - name: Wait on Pact Verifier
       shell: bash
       if: ${{ inputs.pact-broker-token }}
@@ -109,7 +118,7 @@ runs:
       shell: bash
       if: always()
       run: docker compose -p test_${{ github.job }} logs -t > functional_test_docker_logs.txt
-      
+
     - name: Archive the Docker Logs
       uses: actions/upload-artifact@v3
       if: always()
@@ -124,6 +133,14 @@ runs:
       shell: bash
       run: docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
 
+    - name: Report BDD Functional Test Results
+      uses: dorny/test-reporter@v1
+      if: ${{ inputs.bdd-flag == 'true' }}
+      with:
+        name: Functional BDD Tests
+        path: test/tests/bin/results/bdd/*.xml
+        reporter: java-junit
+
     - name: Report Functional Test Results
       uses: dorny/test-reporter@v1
       if: always()
@@ -131,6 +148,13 @@ runs:
         name: Functional Tests
         path: test/tests/bin/results/*.xml
         reporter: jest-junit
+
+    - name: Report BDD Test Results
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.bdd-flag == 'true' }}
+      with:
+        name: cucumber-results
+        path: test/tests/bin/results/cucumber-report.html
 
     - name: Report Pact Provider Results
       uses: dorny/test-reporter@v1
