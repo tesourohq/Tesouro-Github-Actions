@@ -138,7 +138,7 @@ runs:
 
     - name: Report BDD Functional Test Results
       uses: dorny/test-reporter@v1
-      if: always()
+      if: ${{ inputs.bdd-flag == 'true' }}
       with:
         name: Functional BDD Tests
         path: test/tests/bin/results/bdd/*.xml
@@ -154,7 +154,7 @@ runs:
 
     - name: Report BDD Test Results
       uses: actions/upload-artifact@v4
-      if: always()
+      if: ${{ inputs.bdd-flag == 'true' }}
       with:
         name: cucumber-results
         path: test/tests/bin/results/cucumber-report.html
