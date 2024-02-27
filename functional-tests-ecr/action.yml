@@ -36,6 +36,10 @@ inputs:
   aws-repository-name:
     description: AWS ECR repository name.
     required: true
+  bdd-flag:
+    description: Flag indicating whether behavioral tests are running, and should be waited for
+    required: false
+    default: 'false'
 runs:
   using: composite
   steps:
@@ -89,6 +93,11 @@ runs:
       shell: bash
       run: docker wait test_${{ github.job }}-test-1
       
+    - name: Wait on BDD Tests (Cucumber)
+      shell: bash
+      if: ${{ inputs.bdd-flag == 'true' }}
+      run: docker wait test_${{ github.job }}-cucumber-test-1
+
     - name: Wait on Pact Verifier
       shell: bash
       if: ${{ inputs.pact-broker-token }}
