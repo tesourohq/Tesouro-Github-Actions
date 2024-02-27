@@ -117,10 +117,7 @@ runs:
     - name: Print Docker Logs
       shell: bash
       if: always()
-      run: |
-        docker compose -p test_${{ github.job }} logs -t > functional_test_docker_logs.txt
-        [ -f test/tests/bin/results/results.cucumber ] && echo "### BDD Test Summary 🥒" >> $GITHUB_STEP_SUMMARY
-        [ -f test/tests/bin/results/results.cucumber ] && cat test/tests/bin/results/results.cucumber >> $GITHUB_STEP_SUMMARY
+      run: docker compose -p test_${{ github.job }} logs -t > functional_test_docker_logs.txt
 
     - name: Archive the Docker Logs
       uses: actions/upload-artifact@v3
