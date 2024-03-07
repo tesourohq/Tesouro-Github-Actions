@@ -1,0 +1,14 @@
+name: Validate GraqhQL
+description: Validate Graphql Schema for breaking changes and visibility
+inputs:
+  path-to-graphql-schema:
+    description: Path to graphql schema.
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+    - uses: kamilkisiela/graphql-inspector@4.0.3
+      with:
+        name: Inspect GraphQL
+        schema: "main:${{path-to-graphql-schema}}"
