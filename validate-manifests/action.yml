@@ -1,5 +1,5 @@
 name: Validate Kubernetes Manifests
-description: Validate Kubernetes Manifests for Kustomize
+description: Validate Graphql Schemas for Apollo Federation
 inputs:
   path-to-overlays:
     description: Path to kubernetes kustomize overlays.
@@ -17,4 +17,4 @@ runs:
         kustomize: '5.3.0'
     - shell: bash
       run: |
-        for dir in ${{ inputs.path-to-overlays }}*/; do kustomize build "${{ inputs.path-to-overlays }}""/""$dir" | kubeconform -schema-location default -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' -verbose -output json; done
+        for dir in ${{ inputs.path-to-overlays }}*/; do kustomize build "$dir" | kubeconform -schema-location default -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' -verbose -output json; done
