@@ -13,4 +13,4 @@ runs:
         fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest # selectable (default: repo,message)
       env:
         SLACK_WEBHOOK_URL: ${{ inputs.slack_webhook_url }} # required
-      if: failure() # Pick up events only on failure.
+      if: failure() || cancelled() # Pick up events only on failure or cancellation.
