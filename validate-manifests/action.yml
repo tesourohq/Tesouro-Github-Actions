@@ -1,5 +1,5 @@
 name: Validate Kubernetes Manifests
-description: Validate Graphql Schemas for Apollo Federation
+description: Validate Kubernetes Manifests for Kustomize
 inputs:
   path-to-overlays:
     description: Path to kubernetes kustomize overlays.
