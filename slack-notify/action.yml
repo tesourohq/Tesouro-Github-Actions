@@ -9,7 +9,9 @@ runs:
   steps:
     - uses: 8398a7/action-slack@v3
       with:
-        status: ${{ job.status }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest # selectable (default: repo,message)
+        status: 'failure'
+        username: 'GHA-Slack-Notifybot'
+        icon_emoji: ':ahhhhhhhhh:'
+        fields: repo,message,commit,author,action,eventName,ref,workflow,pullRequest # selectable (default: repo,message)
       env:
         SLACK_WEBHOOK_URL: ${{ inputs.slack-webhook-url }} # required
