@@ -8,7 +8,7 @@ runs:
   using: composite
   steps:
     - uses: actions/checkout@v4
-    - uses: kamilkisiela/graphql-inspector@4.0.3
+    - uses: kamilkisiela/graphql-inspector@91cefc9d934ccac1b4be9f26f44b6f533c300247
       with:
         name: Inspect and Validate GraphQL
         schema: "main:${{inputs.path-to-graphql-schema}}"
