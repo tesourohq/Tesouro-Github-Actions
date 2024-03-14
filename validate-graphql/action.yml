@@ -19,4 +19,4 @@ runs:
         name: Inspect and Validate GraphQL
         schema: "main:${{inputs.path-to-graphql-schema}}"
         approve-label: expected-breaking-change
-        fail-on-breaking-change: ${{inputs.fail-on-breaking-change}}
+        fail-on-breaking: ${{inputs.fail-on-breaking-change}}
