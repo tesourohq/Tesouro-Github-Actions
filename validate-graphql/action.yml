@@ -4,6 +4,10 @@ inputs:
   path-to-graphql-schema:
     description: Path to graphql schema.
     required: true
+  fail-on-breaking-change:
+    description: Whether to fail on breaking change or not, true or false.
+    required: false
+    default: 'true'
 runs:
   using: composite
   steps:
@@ -14,3 +18,5 @@ runs:
       with:
         name: Inspect and Validate GraphQL
         schema: "main:${{inputs.path-to-graphql-schema}}"
+        approve-label: expected-breaking-graphql-change
+        fail-on-breaking: ${{inputs.fail-on-breaking-change}}
