@@ -46,14 +46,14 @@ runs:
     - name: Test
       working-directory: ./src
       shell: bash
-      run: dotnet test --no-build -c Release -l 'trx;LogFileName=${{ runner.temp }}/results.trx' ${{ inputs.solution-file }} --collect:"XPlat Code Coverage" --results-directory ${{ runner.temp }}
+      run: dotnet test --no-build -c Release -l 'trx;LogFilePrefix=${{ runner.temp }}/results' ${{ inputs.solution-file }} --collect:"XPlat Code Coverage" --results-directory ${{ runner.temp }}
 
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: always()
       with:
         name: Unit Tests
-        path: ${{ runner.temp }}/results.trx
+        path: ${{ runner.temp }}/results*trx
         reporter: dotnet-trx
            
       # gets all output files from Coverlet (one per test project) and combines into a single file
