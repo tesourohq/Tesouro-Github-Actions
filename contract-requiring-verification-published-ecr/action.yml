@@ -82,7 +82,7 @@ runs:
       run: docker compose -p test_${{ github.job }} logs -t > pact_verification_logs.txt
 
     - name: Archive the Docker Logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: pact_verification_logs
