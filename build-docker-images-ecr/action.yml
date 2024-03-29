@@ -97,7 +97,8 @@ runs:
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
         ignore-unfixed: true
-        format: 'table'
+        format: 'template'
+        template: 'trivy-report.tpl'
         output: ${{ github.step_summary }}
         exit-code: '1'
         timeout: '30m'
