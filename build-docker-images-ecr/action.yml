@@ -89,10 +89,8 @@ runs:
     - name: Pull Trivy Files
       shell: bash
       run: |
-        wget https://github.com/tesourohq/Tesouro-Github-Actions/blob/PRODEV-5775-implement-a-different-solution-for-image-scanning-in-ci/build-docker-images-ecr/trivy-report.tpl
-        wget https://github.com/tesourohq/Tesouro-Github-Actions/blob/PRODEV-5775-implement-a-different-solution-for-image-scanning-in-ci/build-docker-images-ecr/.trivyignores
-        ls -la
-        pwd
+        wget -L https://github.com/tesourohq/Tesouro-Github-Actions/blob/PRODEV-5775-implement-a-different-solution-for-image-scanning-in-ci/build-docker-images-ecr/trivy-report.tpl
+        wget -L https://github.com/tesourohq/Tesouro-Github-Actions/blob/PRODEV-5775-implement-a-different-solution-for-image-scanning-in-ci/build-docker-images-ecr/.trivyignores
     
     # https://github.com/aquasecurity/trivy-action
     - name: Scan Image
