@@ -98,7 +98,7 @@ runs:
         severity: 'CRITICAL,HIGH'
         ignore-unfixed: true
         format: 'template'
-        template: 'trivy-report.tpl'
+        template: "@/github/workspace/trivy-report.tpl"
         output: ${{ github.step_summary }}
         exit-code: '1'
         timeout: '30m'
