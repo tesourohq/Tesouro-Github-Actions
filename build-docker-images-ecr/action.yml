@@ -93,13 +93,20 @@ runs:
       with:
         image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
         scan-type: image
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
+        scanners: 'vuln'
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
+        ignore-unfixed: true
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        limit-severities-for-sarif: true
+        exit-code: '1'
         timeout: '30m'
-        scanners: 'vuln'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
 
     - name: Push
       if: steps.build.outcome == 'success' && steps.scan.outcome == 'success'
