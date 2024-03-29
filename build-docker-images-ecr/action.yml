@@ -105,7 +105,7 @@ runs:
 
     - name: Add Vulnerability Scan to Summary
       shell: bash
-      run: cat ${{ runner.temp }}/trivy-results.sarif >> $GITHUB_STEP_SUMMARY
+      run: cat trivy-results.sarif >> $GITHUB_STEP_SUMMARY
 
     - name: Push
       if: steps.build.outcome == 'success' && steps.scan.outcome == 'success'
