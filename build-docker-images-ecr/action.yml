@@ -97,15 +97,17 @@ runs:
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
         ignore-unfixed: true
-        format: 'table'
-        output: 'trivy-results.txt'
+        format: 'template'
+        template: "@trivy/github-markdown.tpl"
+        output: 'trivy-results.md'
         limit-severities-for-sarif: true
         exit-code: '1'
         timeout: '30m'
 
     - name: Add Vulnerability Scan to Summary
       shell: bash
-      run: cat trivy-results.txt >> $GITHUB_STEP_SUMMARY
+      run: cat trivy-results.md >> $GITHUB_STEP_SUMMARY
+      if: always()
 
     - name: Push
       if: steps.build.outcome == 'success' && steps.scan.outcome == 'success'
