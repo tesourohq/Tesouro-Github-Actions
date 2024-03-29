@@ -99,9 +99,14 @@ runs:
         ignore-unfixed: true
         format: 'template'
         template: "@/github/workspace/trivy-report.tpl"
-        output: ${{ github.step_summary }}
+        output: trivy-report.md 
         exit-code: '1'
         timeout: '30m'
+      
+    - name: Print Scan to Summary
+      shell: bash
+      run: cat trivy-report.md >> $GITHUB_STEP_SUMMARY
+      if: always()
 
     - name: Push
       if: steps.build.outcome == 'success' && steps.scan.outcome == 'success'
