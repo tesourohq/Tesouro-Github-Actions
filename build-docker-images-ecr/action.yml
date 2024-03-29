@@ -85,11 +85,6 @@ runs:
         tags: |
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:latest
           ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
-
-    - name: Pull trivy files for Report
-      shell: bash
-      run: |
-        wget https://github.com/tesourohq/Tesouro-Github-Actions/blob/PRODEV-5775-implement-a-different-solution-for-image-scanning-in-ci/build-docker-images-ecr/trivy-report.tpl
     
     # https://github.com/aquasecurity/trivy-action
     - name: Scan Image
