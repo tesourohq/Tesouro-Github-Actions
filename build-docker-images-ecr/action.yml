@@ -108,7 +108,7 @@ runs:
         format: 'template'
         template: "@/github/workspace/trivy-report.tpl"
         output: trivy-report.md 
-        trivyignores: "@/github/workspace/.trivyignores"
+        trivyignores: ".trivyignores"
         exit-code: '1'
         timeout: '30m'
       
