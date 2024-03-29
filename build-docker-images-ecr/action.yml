@@ -97,9 +97,8 @@ runs:
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
         ignore-unfixed: true
-        format: 'template'
-        template: "@trivy/github-markdown.tpl"
-        output: 'trivy-results.md'
+        format: 'table'
+        output: ${{ github.step_summary }}
         limit-severities-for-sarif: true
         exit-code: '1'
         timeout: '30m'
