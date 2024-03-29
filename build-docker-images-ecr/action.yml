@@ -98,7 +98,7 @@ runs:
         severity: 'CRITICAL,HIGH'
         ignore-unfixed: true
         format: 'template'
-        template: "@/github/workspace/trivy-report.tpl"
+        template: "https://github.com/tesourohq/Tesouro-Github-Actions/blob/PRODEV-5775-implement-a-different-solution-for-image-scanning-in-ci/build-docker-images-ecr/trivy-report.tpl"
         output: trivy-report.md 
         exit-code: '1'
         timeout: '30m'
