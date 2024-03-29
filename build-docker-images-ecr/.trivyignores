@@ -1,4 +1,0 @@
-# https://aquasecurity.github.io/trivy/v0.22.0/vulnerability/examples/filter/
-
-# Ignore these vulnerabilities...
-CVE-2022-45868
