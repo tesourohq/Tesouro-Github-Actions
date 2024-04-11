@@ -39,6 +39,10 @@ inputs:
     description: Path from the project root to the database migration kustomize overlays.
     required: false
     default: ''
+  versioned-image-names:
+    description: Space delimited list of image names to be versioned on deploy.
+    required: false
+    default: ''
 runs:
   using: composite
   steps:
@@ -79,6 +83,13 @@ runs:
       if: github.ref == 'refs/heads/main' && inputs.path-to-overlays != ''
       run: |
         for dir in ${{ inputs.path-to-overlays }}*/; do yq e '.labels.[0].pairs.semver = "${{ inputs.semver }}"' -i "$dir""kustomization.yaml"; yq e '.labels.[0].pairs."app.kubernetes.io/version" = "${{ inputs.semver }}"' -i "$dir""kustomization.yaml"; done
+
+    - name: Version images
+      shell: bash
+      if: github.ref == 'refs/heads/main' && inputs.path-to-overlays != '' && inputs.versioned-image-names != ''
+      run: |
+        NAMES="${{ inputs.versioned-image-names }}"
+        for dir in ${{ inputs.path-to-overlays }}*/; do for name in NAMES; do yq -i '.images += [{"name": "$name"} + {"newTag": "${{ inputs.semver }}"}]' "$dir""kustomization.yaml"; done; done
 
     - name: Commit and push
       shell: bash
