@@ -43,6 +43,9 @@ outputs:
   image-name:
     description: The full name of the image that was built and pushed.
     value: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}:${{ inputs.sem-ver }}
+  image-name-without-tag:
+    description: The name of the image sans the tag.
+    value: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.aws-repository-name }}/${{ inputs.image-name }}${{ github.event_name == 'pull_request' && '-ci' || '' }}
 runs:
   using: composite
   steps:
