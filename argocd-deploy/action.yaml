@@ -89,7 +89,7 @@ runs:
       if: github.ref == 'refs/heads/main' && inputs.path-to-overlays != '' && inputs.versioned-image-names != ''
       run: |
         NAMES=${{ inputs.versioned-image-names }}
-        for dir in ${{ inputs.path-to-overlays }}*/; do for name in ${NAMES[@]}; do export n="$name"; yq -i '.images += [{"name": env(n)} + {"newTag": "${{ inputs.semver }}"}]' "$dir""kustomization.yaml"; done; done
+        for dir in ${{ inputs.path-to-overlays }}*/; do yq -i 'del(.images)' "$dir""kustomization.yaml"; for name in ${NAMES[@]}; do export n="$name"; yq -i '.images += [{"name": env(n)} + {"newTag": "${{ inputs.semver }}"}]' "$dir""kustomization.yaml"; done; done
 
     - name: Commit and push
       shell: bash
