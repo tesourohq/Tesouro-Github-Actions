@@ -40,7 +40,7 @@ inputs:
     required: false
     default: ''
   versioned-image-names:
-    description: Space delimited list of image names to be versioned on deploy.
+    description: Space delimited bash array of image names to be versioned on deploy. Example ("abc" "efg" "hij")
     required: false
     default: ''
 runs:
