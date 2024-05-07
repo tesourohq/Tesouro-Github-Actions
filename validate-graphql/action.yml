@@ -14,7 +14,7 @@ runs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - uses: kamilkisiela/graphql-inspector@v4.0.3
+    - uses: kamilkisiela/graphql-inspector@v3.4.0
       with:
         name: Inspect and Validate GraphQL
         schema: "main:${{inputs.path-to-graphql-schema}}"
