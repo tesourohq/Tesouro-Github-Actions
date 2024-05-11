@@ -37,17 +37,17 @@ runs:
   using: composite
   steps:
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@ACTIONS_CONFIGUREAWSCREDENTIALS_VERSION
       with:
         role-to-assume: ${{ inputs.aws-github-role }}
         aws-region: ${{ inputs.aws-region }}
 
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
+      uses: aws-actions/amazon-ecr-login@ACTIONS_AMAZONECRLOGIN_VERSION
 
     - name: Login to Dockerhub
-      uses: docker/login-action@v3
+      uses: docker/login-action@ACTIONS_DOCKERLOGINACTION_VERSION
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-access-token }}
@@ -82,7 +82,7 @@ runs:
       run: docker compose -p test_${{ github.job }} logs -t > pact_verification_logs.txt
 
     - name: Archive the Docker Logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@ACTIONS_UPLOADARTIFACT_VERSION
       if: always()
       with:
         name: pact_verification_logs
