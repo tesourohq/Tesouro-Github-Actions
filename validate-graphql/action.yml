@@ -15,6 +15,7 @@ runs:
       with:
         fetch-depth: 0
     - uses: kamilkisiela/graphql-inspector@release-1701263349990
+      if: github.event_name == 'pull-request' # Only on PR
       with:
         name: Inspect and Validate GraphQL
         schema: "main:${{inputs.path-to-graphql-schema}}"
