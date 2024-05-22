@@ -1,0 +1,17 @@
+name: 'GitHub App Token Wrapper'
+description: 'Wrapper for tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92'
+inputs:
+  app-id:
+    description: 'GitHub App ID'
+    required: true
+  private-key:
+    description: 'Private key'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'GitHub App Token'
+      uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
+      with:
+        app-id: ${{ inputs.app-id }}
+        private-key: ${{ inputs.private-key }}

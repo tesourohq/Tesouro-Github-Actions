@@ -1,0 +1,7 @@
+name: 'Amazon ECR Login Wrapper'
+description: 'Wrapper for aws-actions/amazon-ecr-login@v2'
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Amazon ECR Login'
+      uses: aws-actions/amazon-ecr-login@v2

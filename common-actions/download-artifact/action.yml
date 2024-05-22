@@ -1,0 +1,17 @@
+name: 'Download Artifact Wrapper'
+description: 'Wrapper for actions/download-artifact@v4'
+inputs:
+  name:
+    description: 'Artifact name'
+    required: true
+  path:
+    description: 'Download path'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Download Artifact'
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}

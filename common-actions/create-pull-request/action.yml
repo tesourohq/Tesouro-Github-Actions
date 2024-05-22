@@ -1,0 +1,25 @@
+name: 'Create Pull Request Wrapper'
+description: 'Wrapper for peter-evans/create-pull-request@v6'
+inputs:
+  token:
+    description: 'GitHub token'
+    required: true
+  branch:
+    description: 'Branch name'
+    required: true
+  title:
+    description: 'Pull request title'
+    required: true
+  body:
+    description: 'Pull request body'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Create Pull Request'
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ inputs.token }}
+        branch: ${{ inputs.branch }}
+        title: ${{ inputs.title }}
+        body: ${{ inputs.body }}

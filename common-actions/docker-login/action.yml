@@ -1,0 +1,17 @@
+name: 'Docker Login Wrapper'
+description: 'Wrapper for docker/login-action@v3'
+inputs:
+  username:
+    description: 'Docker username'
+    required: true
+  password:
+    description: 'Docker password'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Docker Login'
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
