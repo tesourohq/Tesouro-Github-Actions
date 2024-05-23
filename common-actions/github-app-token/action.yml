@@ -13,5 +13,5 @@ runs:
     - name: 'GitHub App Token'
       uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
       with:
-        app-id: ${{ inputs.app_id }}
-        private-key: ${{ inputs.private_key }}
+        app_id: ${{ inputs.app_id }}
+        private_key: ${{ inputs.private_key }}
