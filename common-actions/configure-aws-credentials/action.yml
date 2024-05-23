@@ -1,0 +1,21 @@
+name: 'Configure AWS Credentials Wrapper'
+description: 'Wrapper for aws-actions/configure-aws-credentials'
+inputs:
+  aws-access-key-id:
+    description: 'AWS Access Key ID'
+    required: true
+  aws-secret-access-key:
+    description: 'AWS Secret Access Key'
+    required: true
+  aws-region:
+    description: 'AWS Region'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Configure AWS Credentials'
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.aws-region }}

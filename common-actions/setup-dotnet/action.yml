@@ -1,0 +1,13 @@
+name: 'Setup .NET Wrapper'
+description: 'Wrapper for actions/setup-dotnet'
+inputs:
+  dotnet-version:
+    description: '.NET version'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Setup .NET'
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
