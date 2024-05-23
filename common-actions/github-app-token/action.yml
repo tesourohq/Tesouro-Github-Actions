@@ -1,10 +1,10 @@
 name: 'GitHub App Token Wrapper'
 description: 'Wrapper for tibdex/github-app-token'
 inputs:
-  app-id:
+  app_id:
     description: 'GitHub App ID'
     required: true
-  private-key:
+  private_key:
     description: 'Private key'
     required: true
 runs:
@@ -13,5 +13,5 @@ runs:
     - name: 'GitHub App Token'
       uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
       with:
-        app-id: ${{ inputs.app-id }}
-        private-key: ${{ inputs.private-key }}
+        app-id: ${{ inputs.app_id }}
+        private-key: ${{ inputs.private_key }}
