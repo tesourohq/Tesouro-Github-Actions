@@ -1,5 +1,5 @@
 name: 'Enable Pull Request Automerge Wrapper'
-description: 'Wrapper for peter-evans/enable-pull-request-automerge@v3'
+description: 'Wrapper for peter-evans/enable-pull-request-automerge'
 inputs:
   token:
     description: 'GitHub token'

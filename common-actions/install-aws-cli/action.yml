@@ -1,5 +1,5 @@
 name: 'Install AWS CLI Wrapper'
-description: 'Wrapper for unfor19/install-aws-cli-action@v1'
+description: 'Wrapper for unfor19/install-aws-cli-action'
 runs:
   using: 'composite'
   steps:

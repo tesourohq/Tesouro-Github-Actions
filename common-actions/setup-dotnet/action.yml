@@ -1,5 +1,5 @@
 name: 'Setup .NET Wrapper'
-description: 'Wrapper for actions/setup-dotnet@v4'
+description: 'Wrapper for actions/setup-dotnet'
 inputs:
   dotnet-version:
     description: '.NET version'

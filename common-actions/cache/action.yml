@@ -1,5 +1,5 @@
 name: 'Cache Wrapper'
-description: 'Wrapper for actions/cache@v4'
+description: 'Wrapper for actions/cache'
 inputs:
   path:
     description: 'Path to cache'

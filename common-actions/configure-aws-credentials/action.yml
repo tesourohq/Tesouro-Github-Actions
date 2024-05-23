@@ -1,5 +1,5 @@
 name: 'Configure AWS Credentials Wrapper'
-description: 'Wrapper for aws-actions/configure-aws-credentials@v4'
+description: 'Wrapper for aws-actions/configure-aws-credentials'
 inputs:
   aws-access-key-id:
     description: 'AWS Access Key ID'

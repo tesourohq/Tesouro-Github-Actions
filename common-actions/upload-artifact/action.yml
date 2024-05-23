@@ -1,5 +1,5 @@
 name: 'Upload Artifact Wrapper'
-description: 'Wrapper for actions/upload-artifact@v4'
+description: 'Wrapper for actions/upload-artifact'
 inputs:
   name:
     description: 'Artifact name'

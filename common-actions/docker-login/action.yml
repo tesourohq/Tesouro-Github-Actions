@@ -1,5 +1,5 @@
 name: 'Docker Login Wrapper'
-description: 'Wrapper for docker/login-action@v3'
+description: 'Wrapper for docker/login-action'
 inputs:
   username:
     description: 'Docker username'

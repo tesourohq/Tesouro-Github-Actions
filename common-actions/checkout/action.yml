@@ -1,5 +1,5 @@
 name: 'Checkout Wrapper'
-description: 'Wrapper for actions/checkout@v4'
+description: 'Wrapper for actions/checkout'
 inputs:
   fetch-depth:
     description: 'How many commits to fetch'

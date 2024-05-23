@@ -1,5 +1,5 @@
 name: 'Create Pull Request Wrapper'
-description: 'Wrapper for peter-evans/create-pull-request@v6'
+description: 'Wrapper for peter-evans/create-pull-request'
 inputs:
   token:
     description: 'GitHub token'

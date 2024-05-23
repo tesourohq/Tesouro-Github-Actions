@@ -1,5 +1,5 @@
 name: 'GitHub App Token Wrapper'
-description: 'Wrapper for tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92'
+description: 'Wrapper for tibdex/github-app-token'
 inputs:
   app-id:
     description: 'GitHub App ID'

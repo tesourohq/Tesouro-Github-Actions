@@ -1,5 +1,5 @@
 name: 'Download Artifact Wrapper'
-description: 'Wrapper for actions/download-artifact@v4'
+description: 'Wrapper for actions/download-artifact'
 inputs:
   name:
     description: 'Artifact name'
