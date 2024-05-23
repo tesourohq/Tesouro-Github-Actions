@@ -1,11 +1,8 @@
 name: 'Checkout Wrapper'
 description: 'Wrapper for actions/checkout@v4'
 inputs:
-  repository:
-    description: 'Repository'
-    required: false
-  ref:
-    description: 'Ref'
+  fetch-depth:
+    description: 'How many commits to fetch'
     required: false
 runs:
   using: 'composite'
@@ -13,5 +10,4 @@ runs:
     - name: 'Checkout'
       uses: actions/checkout@v4
       with:
-        repository: ${{ inputs.repository }}
-        ref: ${{ inputs.ref }}
+        fetch-depth: ${{ inputs.fetch-depth }}
