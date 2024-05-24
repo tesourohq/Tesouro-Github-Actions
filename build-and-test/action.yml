@@ -58,7 +58,7 @@ runs:
       # gets all output files from Coverlet (one per test project) and combines into a single file
       # creates a Markdown file with coverage per class
     - name: Add Coverage Report
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.3.0
       with:
         reports: ${{ runner.temp }}/*/coverage.cobertura.xml
         targetdir: ${{ runner.temp }}
