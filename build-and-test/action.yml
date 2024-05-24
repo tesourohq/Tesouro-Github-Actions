@@ -64,7 +64,6 @@ runs:
         targetdir: ${{ runner.temp }}
         reporttypes: Cobertura;MarkdownSummary
         classfilters: '-System.*;-Microsoft.*;-Newtonsoft.*;-System.Text.RegularExpressions.*'
-        filefilters: '-**/obj/**;-**/bin/**;-**/packages/**;-**/node_modules/**'
   
     - name: Add Coverage MD Report Summary
       shell: bash
