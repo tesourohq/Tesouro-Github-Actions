@@ -19,11 +19,11 @@ runs:
   using: composite
   steps:
     - name: Setup .NET Core
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/setup-dotnet@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/setup-dotnet@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
         
-    - uses: tesourohq/Tesouro-Github-Actions/common-actions/cache@main
+    - uses: tesourohq/Tesouro-Github-Actions/common-actions/cache@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
