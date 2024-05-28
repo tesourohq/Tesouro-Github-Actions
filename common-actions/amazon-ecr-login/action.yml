@@ -3,25 +3,10 @@ description: 'Wrapper for aws-actions/amazon-ecr-login'
 outputs:
   registry:
     description: 'ECR registry URL'
-    value: ${{ steps.set-outputs.outputs.registry }}
+    value: ${{ steps.ecr-login.outputs.registry }}
 runs:
   using: 'composite'
   steps:
     - name: 'Amazon ECR Login'
       id: ecr-login
       uses: aws-actions/amazon-ecr-login@v2
-
-    - name: Set Outputs
-      id: set-outputs
-      shell: bash
-      run: |
-        registry=${{ steps.ecr-login.outputs.registry }}
-        if [ -z "$registry" ]; then
-          registry="default-registry-value"
-        fi
-        echo "registry=$registry" >> $GITHUB_OUTPUT
-
-    - name: Debug Output
-      shell: bash
-      run: | 
-        echo "Registry URL: ${{ steps.set-outputs.outputs.registry }}"
