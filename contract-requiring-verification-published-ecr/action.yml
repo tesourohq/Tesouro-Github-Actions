@@ -37,17 +37,17 @@ runs:
   using: composite
   steps:
     - name: Configure AWS credentials
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@main
       with:
         role-to-assume: ${{ inputs.aws-github-role }}
         aws-region: ${{ inputs.aws-region }}
 
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/amazon-ecr-login@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/amazon-ecr-login@main
 
     - name: Login to Dockerhub
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/login-action@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/login-action@main
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-access-token }}
@@ -82,7 +82,7 @@ runs:
       run: docker compose -p test_${{ github.job }} logs -t > pact_verification_logs.txt
 
     - name: Archive the Docker Logs
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@main
       if: always()
       with:
         name: pact_verification_logs

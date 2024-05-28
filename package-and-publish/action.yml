@@ -24,16 +24,16 @@ runs:
   using: composite
   steps:
     - name: Checkout
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/checkout@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/checkout@main
       with:
         fetch-depth: 0
 
     - name: Setup .NET Core
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/setup-dotnet@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/setup-dotnet@main
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
 
-    - uses: tesourohq/Tesouro-Github-Actions/common-actions/cache@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+    - uses: tesourohq/Tesouro-Github-Actions/common-actions/cache@main
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
