@@ -32,15 +32,15 @@ runs:
   using: composite
   steps:
     - name: Configure AWS credentials
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@main
       with:
         role-to-assume: ${{ inputs.aws-github-role }}
         aws-region: ${{ inputs.aws-region }}
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/amazon-ecr-login@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/amazon-ecr-login@main
     - name: Checkout
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/checkout@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/checkout@main
       with:
         fetch-depth: 1
         repository: ${{ inputs.graphql-router-repository-name }}
@@ -60,7 +60,7 @@ runs:
         cat ${{github.workspace}}/schema-latest/federate-latest.logs >> $GITHUB_STEP_SUMMARY
         echo '   ' >> $GITHUB_STEP_SUMMARY
     - name: Archive generated supergraph-latest
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@main
       with:
         name: latest-supergraph-schema.graphql
         path: ${{github.workspace}}/schema-latest/supergraph-schema.graphql
@@ -76,7 +76,7 @@ runs:
         cat ${{github.workspace}}/schema/federate-deployed.logs
         cat ${{github.workspace}}/schema/federate-deployed.logs >> $GITHUB_STEP_SUMMARY
     - name: Archive generated supergraph-deployed
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@main
       with:
         name: deployed-supergraph-schema.graphql
         path: ${{github.workspace}}/schema/supergraph-schema.graphql
