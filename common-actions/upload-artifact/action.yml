@@ -11,6 +11,12 @@ inputs:
     description: 'What to do if no files are found'
     required: false
     default: 'warn'
+  retention-days:
+    description: >
+      Duration after which artifact will expire in days. 0 means using default retention.
+      
+      Minimum 1 day.
+      Maximum 90 days unless changed from the repository settings page.
 runs:
   using: 'composite'
   steps:
@@ -20,3 +26,4 @@ runs:
         name: ${{ inputs.name }}
         path: ${{ inputs.path }}
         if-no-files-found: ${{ inputs.if-no-files-found }}
+        retention-days: ${{ inputs.retention-days }}
