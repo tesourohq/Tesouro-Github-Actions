@@ -1,6 +1,9 @@
 name: 'Checkout Wrapper'
 description: 'Wrapper for actions/checkout'
 inputs:
+  clean:
+    description: 'Whether to execute `git clean -ffdx && git reset --hard HEAD` before fetching'
+    default: true
   fetch-depth:
     description: 'How many commits to fetch'
     required: false
@@ -26,6 +29,7 @@ runs:
     - name: 'Checkout'
       uses: actions/checkout@v4
       with:
+        clean: ${{ inputs.clean }}
         fetch-depth: ${{ inputs.fetch-depth }}
         repository: ${{ inputs.repository }}
         token: ${{ inputs.token }}
