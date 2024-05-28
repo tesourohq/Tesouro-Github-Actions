@@ -14,7 +14,7 @@ runs:
   using: composite
   steps:
     - name: (SDK) Download Swagger File
-      uses: actions/download-artifact@ACTIONS_DOWNLOADARTIFACT_VERSION
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/download-artifact@main
       with:
         name: swagger-file
         path: test/tests/bin/results/updates
