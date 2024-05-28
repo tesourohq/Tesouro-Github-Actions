@@ -32,7 +32,6 @@ runs:
       uses: tesourohq/Tesouro-Github-Actions/common-actions/setup-dotnet@main
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
-        include-prerelease: false
 
     - uses: tesourohq/Tesouro-Github-Actions/common-actions/cache@main
       with:
