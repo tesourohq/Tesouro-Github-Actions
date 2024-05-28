@@ -50,7 +50,7 @@ runs:
   using: composite
   steps:
     - name: Login to Docker Hub
-      uses: docker/login-action@v3
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/login-action@main
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-access-token }}
@@ -62,14 +62,14 @@ runs:
       uses: docker/setup-buildx-action@v3
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@main
       with:
         role-to-assume: ${{ inputs.aws-github-role }}
         aws-region: ${{ inputs.aws-region }}
 
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/amazon-ecr-login@main
 
     # https://github.com/docker/build-push-action
     - name: Build
