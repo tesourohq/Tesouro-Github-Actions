@@ -13,3 +13,8 @@ runs:
     - name: Set Outputs
       shell: bash
       run: echo "registry=${{ steps.ecr-login.outputs.registry }}" >> $GITHUB_OUTPUT
+
+    - name: Debug Output
+      shell: bash
+      run: |
+      echo "Registry URL: ${{ steps.ecr-login.outputs.registry }}"
