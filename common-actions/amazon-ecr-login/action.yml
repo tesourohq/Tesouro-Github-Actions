@@ -11,3 +11,11 @@ runs:
     - name: 'Amazon ECR Login'
       id: ecr-login
       uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Set Outputs
+      id: set-outputs
+      shell: bash
+      run: |
+        registry=${{ steps.ecr-login.outputs.registry }}
+        registry=${registry#/}
+        echo "registry=${registry}" >> $GITHUB_OUTPUT
