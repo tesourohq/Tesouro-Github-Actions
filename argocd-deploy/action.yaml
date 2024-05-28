@@ -47,7 +47,7 @@ runs:
   using: composite
   steps:
     - name: CheckoutRepo
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/checkout@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/checkout@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       with:
         token: ${{ inputs.github-token }}
         fetch-depth: 0
