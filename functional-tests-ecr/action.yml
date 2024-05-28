@@ -155,7 +155,7 @@ runs:
 
     - name: Report BDD Functional Test Results
       uses: dorny/test-reporter@v1
-      if: ${{ inputs.bdd-flag == 'true' }}
+      if: always() && ${{ inputs.bdd-flag == 'true' }}
       with:
         name: Functional BDD Tests
         path: test/tests/bin/results/bdd/*.xml
@@ -171,14 +171,14 @@ runs:
 
     - name: Report BDD Test Results
       uses: actions/upload-artifact@v4
-      if: ${{ inputs.bdd-flag == 'true' }}
+      if: always() && ${{ inputs.bdd-flag == 'true' }}
       with:
         name: cucumber-results
         path: test/tests/bin/results/cucumber-report.html
 
     - name: Report Pact Provider Results
       uses: dorny/test-reporter@v1
-      if: ${{ inputs.pact-provider-verification }}
+      if: always() && ${{ inputs.pact-provider-verification }}
       with:
         name: Pact Provider Verification
         path: test/tests/bin/pact/*.xml
