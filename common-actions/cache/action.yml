@@ -1,0 +1,21 @@
+name: 'Cache Wrapper'
+description: 'Wrapper for actions/cache'
+inputs:
+  path:
+    description: 'Path to cache'
+    required: true
+  key:
+    description: 'Cache key'
+    required: true
+  restore-keys:
+    description: 'Restore keys'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Cache'
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+        restore-keys: ${{ inputs.restore-keys }}

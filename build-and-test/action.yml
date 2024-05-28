@@ -22,7 +22,6 @@ runs:
       uses: tesourohq/Tesouro-Github-Actions/common-actions/setup-dotnet@main
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
-        include-prerelease: false
         
     - uses: tesourohq/Tesouro-Github-Actions/common-actions/cache@main
       with:
@@ -59,11 +58,12 @@ runs:
       # gets all output files from Coverlet (one per test project) and combines into a single file
       # creates a Markdown file with coverage per class
     - name: Add Coverage Report
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.10
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.3.0
       with:
         reports: ${{ runner.temp }}/*/coverage.cobertura.xml
         targetdir: ${{ runner.temp }}
         reporttypes: Cobertura;MarkdownSummary
+        classfilters: '-System.*;-Microsoft.*;-Newtonsoft.*;-System.Text.RegularExpressions.*'
   
     - name: Add Coverage MD Report Summary
       shell: bash

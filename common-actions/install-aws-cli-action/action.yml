@@ -1,0 +1,13 @@
+name: 'Install AWS CLI Wrapper'
+description: 'Wrapper for unfor19/install-aws-cli-action'
+inputs:
+  arch:
+    description: 'Desired architecture'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Install AWS CLI'
+      uses: unfor19/install-aws-cli-action@v1
+      with:
+        arch: ${{ inputs.arch }}

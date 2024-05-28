@@ -1,0 +1,17 @@
+name: 'Enable Pull Request Automerge Wrapper'
+description: 'Wrapper for peter-evans/enable-pull-request-automerge'
+inputs:
+  token:
+    description: 'GitHub token'
+    required: true
+  pull-request-number:
+    description: 'Pull request number'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Enable Pull Request Automerge'
+      uses: peter-evans/enable-pull-request-automerge@v3
+      with:
+        token: ${{ inputs.token }}
+        pull-request-number: ${{ inputs.pull-request-number }}
