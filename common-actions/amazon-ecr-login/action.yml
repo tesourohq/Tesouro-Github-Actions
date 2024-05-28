@@ -1,14 +1,13 @@
+# .github/actions/ecr-login-wrapper/action.yml
 name: 'Amazon ECR Login Wrapper'
 description: 'Wrapper for aws-actions/amazon-ecr-login'
 outputs:
   registry:
-    value: ${{ steps.ecr-login.outputs.registry }}
     description: 'ECR registry URL'
+    value: ${{ steps.ecr-login.outputs.registry }}
 runs:
   using: 'composite'
   steps:
     - name: 'Amazon ECR Login'
+      id: ecr-login
       uses: aws-actions/amazon-ecr-login@v2
-    - name: 'Set Outputs'
-      shell: bash
-      run: echo "registry=${{ steps.ecr-login.outputs.registry }}" >> $GITHUB_OUTPUT
