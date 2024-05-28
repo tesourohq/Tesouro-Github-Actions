@@ -14,7 +14,7 @@ runs:
   using: composite
   steps:
     - name: (SDK) Download Swagger File
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/download-artifact@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/download-artifact@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       with:
         name: swagger-file
         path: test/tests/bin/results/updates

@@ -20,7 +20,7 @@ runs:
     - name: Generate a token
       id: generate_token
       if: github.ref == 'refs/heads/main'
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/github-app-token@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/github-app-token@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       with:
         app_id: ${{ inputs.app-id }}
         private_key: ${{ inputs.app-pem }}

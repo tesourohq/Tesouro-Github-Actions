@@ -44,17 +44,17 @@ runs:
   using: composite
   steps:
     - name: Configure AWS credentials
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       with:
         role-to-assume: ${{ inputs.aws-github-role }}
         aws-region: ${{ inputs.aws-region }}
 
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/amazon-ecr-login@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/amazon-ecr-login@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
 
     - name: Login to Dockerhub
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/login-action@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/login-action@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       with:
         username: ${{ inputs.dockerhub-username }}
         password: ${{ inputs.dockerhub-access-token }}
@@ -64,7 +64,7 @@ runs:
       run: sudo rm -rf ./test/tests/bin
       
     - name: Download pact from this build
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/download-artifact@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/download-artifact@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       if: ${{ inputs.pacts-path }}
       with:
         name: pact-file
@@ -129,7 +129,7 @@ runs:
         fi 
       
     - name: Archive swagger file
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       with:
         name: swagger-file
         path: test/tests/bin/results/swagger.json
@@ -140,7 +140,7 @@ runs:
       run: docker compose -p test_${{ github.job }} logs -t > functional_test_docker_logs.txt
 
     - name: Archive the Docker Logs
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       if: always()
       with:
         name: functional_test_docker_logs
@@ -170,7 +170,7 @@ runs:
         reporter: jest-junit
 
     - name: Report BDD Test Results
-      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@main
+      uses: tesourohq/Tesouro-Github-Actions/common-actions/upload-artifact@PRODEV-7755-update-GHA-version-numbers-to-get-version-from-secrets-2
       if: ${{ inputs.bdd-flag == 'true' }}
       with:
         name: cucumber-results
