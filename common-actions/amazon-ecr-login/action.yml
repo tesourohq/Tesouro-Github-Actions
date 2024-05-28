@@ -10,9 +10,3 @@ runs:
     - name: 'Amazon ECR Login'
       id: ecr-login
       uses: aws-actions/amazon-ecr-login@v2
-
-    - name: Debug Registry Output
-      shell: bash
-      run: | 
-        echo "Registry URL in action: ${{ steps.ecr-login.outputs.registry }}"
-           
