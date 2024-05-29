@@ -43,6 +43,9 @@ inputs:
     description: Space delimited bash array of image names to be versioned on deploy. Example ("abc" "efg" "hij")
     required: false
     default: ''
+  clean:
+    description: 'Whether to execute `git clean -ffdx && git reset --hard HEAD` before fetching'
+    default: true
 runs:
   using: composite
   steps:
@@ -51,6 +54,7 @@ runs:
       with:
         token: ${{ inputs.github-token }}
         fetch-depth: 0
+        clean: ${{ inputs.clean }}
 
     - name: Set uid
       shell: bash
