@@ -80,3 +80,8 @@ runs:
       with:
         name: deployed-supergraph-schema.graphql
         path: ${{github.workspace}}/schema/supergraph-schema.graphql
+    - name: Exit status check
+      shell: bash
+      if: ${{ ! contains(github.event.pull_request.labels.*.name, 'expected-breaking-federation-validation') }}
+      run: |
+        if [ $(docker wait deployed) == 1 ] || [ $(docker wait latest) == 1 ]; then exit 1; fi
