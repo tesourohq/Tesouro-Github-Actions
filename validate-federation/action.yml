@@ -82,6 +82,6 @@ runs:
         path: ${{github.workspace}}/schema/supergraph-schema.graphql
     - name: Exit status check
       shell: bash
+      if: contains(github.event.issue.labels.*.name, 'expected-breaking-federation-validation') == 0
       run: |
-        if [ $(contains(github.event.issue.labels.*.name, 'expected-breaking-federation-validation')) ]; then exit 0; fi
         if [ $(docker wait deployed) == 1 ] || [ $(docker wait latest) == 1 ]; then exit 1; fi
