@@ -80,3 +80,7 @@ runs:
       with:
         name: deployed-supergraph-schema.graphql
         path: ${{github.workspace}}/schema/supergraph-schema.graphql
+    - name: Exit status check
+      shell: bash
+      run: |
+        if [ $(docker wait deployed) == 1 ] || [ $(docker wait latest) == 1 ]; then exit 1; fi
