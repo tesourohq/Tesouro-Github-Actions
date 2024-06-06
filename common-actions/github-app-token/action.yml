@@ -10,7 +10,7 @@ inputs:
 outputs:
   token:
     description: "Token"
-    value: ${{ steps.ecr-generate_token.outputs.token }}
+    value: ${{ steps.generate_token.outputs.token }}
 runs:
   using: "composite"
   steps:
