@@ -13,6 +13,15 @@ inputs:
   body:
     description: 'Pull request body'
     required: false
+  commit-message:
+    description: 'Commit message'
+    required: false
+  base:
+    description: 'Base branch'
+    required: false
+  delete-branch:
+    description: 'Delete branch'
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -23,3 +32,6 @@ runs:
         branch: ${{ inputs.branch }}
         title: ${{ inputs.title }}
         body: ${{ inputs.body }}
+        commit-message: ${{ inputs.commit-message }}
+        base: ${{ inputs.base }}
+        delete-branch: ${{ inputs.delete-branch }}
