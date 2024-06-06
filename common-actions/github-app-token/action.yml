@@ -1,16 +1,19 @@
-name: 'GitHub App Token Wrapper'
-description: 'Wrapper for tibdex/github-app-token'
+name: "GitHub App Token Wrapper"
+description: "Wrapper for tibdex/github-app-token"
 inputs:
   app_id:
-    description: 'GitHub App ID'
+    description: "GitHub App ID"
     required: true
   private_key:
-    description: 'Private key'
+    description: "Private key"
     required: true
 runs:
-  using: 'composite'
+  using: "composite"
+  outputs:
+    token: ${{ steps.generate.outputs.token }}
   steps:
-    - name: 'GitHub App Token'
+    - name: "GitHub App Token"
+      id: generate
       uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
       with:
         app_id: ${{ inputs.app_id }}
