@@ -8,7 +8,9 @@ inputs:
     description: "Private key"
     required: true
 outputs:
-  token: ${{ steps.generate_token.outputs.token }}
+  token:
+    description: "Token"
+    value: ${{ steps.ecr-generate_token.outputs.token }}
 runs:
   using: "composite"
   steps:
