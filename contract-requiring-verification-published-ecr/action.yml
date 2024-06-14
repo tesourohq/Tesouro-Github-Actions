@@ -33,6 +33,9 @@ inputs:
   aws-repository-name:
     description: AWS ECR repository name.
     required: true
+  jobs-image:
+    description: Image for the jobs container for the service.
+    required: false
 runs:
   using: composite
   steps:
@@ -64,6 +67,7 @@ runs:
         GIT_BRANCH: ${{ github.ref_name }}
         PACT_URL: ${{ inputs.pact-url }}
         GH_PACKAGES_TOKEN: ${{ inputs.gh-packages-token }}
+        JOBS_IMAGE: ${{ inputs.jobs-image }}
       shell: bash
       run: |
         # Build pact verification container and associated services
