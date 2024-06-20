@@ -3,3 +3,4 @@
 # Ignore these vulnerabilities...
 # (list each on a new line, like below for example)
 # CVE-2022-45868
+CVE-2024-24790 exp:2024-07-01
