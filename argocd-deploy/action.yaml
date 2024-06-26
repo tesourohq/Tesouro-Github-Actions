@@ -113,5 +113,16 @@ runs:
         ARGOCD_SERVER=${{ inputs.argocd-host }}
         JSON=$(jq -c -n --arg username "$USER_NAME" --arg password "$PASSWORD" '$ARGS.named')
         TOKEN=$(curl -k $ARGOCD_SERVER/api/v1/session -H "Content-Type: application/json" -d "$JSON" | jq -r ".token")
-        curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" | jq
-      
+        
+        SYNC_RESPONSE=$(curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN")
+        
+        ERROR_MESSAGE=$(echo "$SYNC_RESPONSE" | jq -r '.error // empty')
+        
+        if [ -n "$ERROR_MESSAGE" ]; then
+          echo "Error during sync operation: $ERROR_MESSAGE"
+          echo "$SYNC_RESPONSE" | jq
+          exit 1
+        fi
+        
+        echo "Application synced successfully."
+        echo "$SYNC_RESPONSE" | jq
