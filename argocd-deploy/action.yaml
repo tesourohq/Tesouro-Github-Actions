@@ -113,11 +113,13 @@ runs:
         ARGOCD_SERVER=${{ inputs.argocd-host }}
         JSON=$(jq -c -n --arg username "$USER_NAME" --arg password "$PASSWORD" '$ARGS.named')
         TOKEN=$(curl -k $ARGOCD_SERVER/api/v1/session -H "Content-Type: application/json" -d "$JSON" | jq -r ".token")
+        
         SYNC_RESPONSE=$(curl -s -X POST "${{ inputs.argocd-host }}/api/v1/applications/${{ inputs.argocd-application-name }}/sync" -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN")
-        SYNC_STATUS=$(echo "$SYNC_RESPONSE" | jq -r '.status')
-    
-        if [ "$SYNC_STATUS" != "Synced" ]; then
-          echo "Failed to sync application or server error"
+        
+        ERROR_MESSAGE=$(echo "$SYNC_RESPONSE" | jq -r '.error // empty')
+        
+        if [ -n "$ERROR_MESSAGE" ]; then
+          echo "Error during sync operation: $ERROR_MESSAGE"
           echo "$SYNC_RESPONSE" | jq
           exit 1
         fi
