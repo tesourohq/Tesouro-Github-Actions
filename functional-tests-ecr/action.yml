@@ -46,8 +46,8 @@ runs:
     - name: Install Docker Compose
       shell: bash
       run: |
-        curl -L "https://github.com/docker/compose/releases/download/v2.28.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-        chmod +x /usr/local/bin/docker-compose
+        curl -L "https://github.com/docker/compose/releases/download/v2.28.1/docker-compose-$(uname -s)-$(uname -m)" -o $HOME/.docker/cli-plugins/docker-compose
+        chmod +x $HOME/.docker/cli-plugins/docker-compose
       
     - name: Configure AWS credentials
       uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@main
