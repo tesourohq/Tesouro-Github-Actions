@@ -43,10 +43,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Alias Docker Compose
-      shell: bash
-      run: |
-        alias docker-compose="docker compose"
       
     - name: Configure AWS credentials
       uses: tesourohq/Tesouro-Github-Actions/common-actions/configure-aws-credentials@main
@@ -91,7 +87,7 @@ runs:
       run: |
         # Build test container and associated services (and run tests)
         export CLOUDSDK_PYTHON=python2
-        docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} up --build --force-recreate -d
+        docker compose -f docker-compose.ci.yml -p test_${{ github.job }} up --build --force-recreate -d
 
     # Here, we ask docker to wait until the Jest test container is done running
     - name: Wait on Functional tests
@@ -156,7 +152,7 @@ runs:
       if: always()
       working-directory: ./test
       shell: bash
-      run: docker-compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
+      run: docker compose -f docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
 
     - name: Report BDD Functional Test Results
       uses: dorny/test-reporter@v1
