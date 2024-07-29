@@ -106,7 +106,7 @@ runs:
       run: docker-compose -f  docker-compose.ci.yml -p test_${{ github.job }} down --remove-orphans --rmi all --volumes
 
     - name: File List
-      uses: the-coding-turtle/ga-file-list@v0.4.1
+      uses: martinhaintz/ga-file-list@v0.4.1
       with:
         file_extension: "xml"        
   
