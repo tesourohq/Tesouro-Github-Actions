@@ -10,6 +10,9 @@ inputs:
   cosmo_cdn_url:
     description: Cosmo CDN Url
     required: true
+  cosmo_web_url:
+    description: Cosmo Web Url
+    required: true
   subgraph_name:
     description: Subgraph Name
     required: true
@@ -38,6 +41,7 @@ runs:
         COSMO_API_KEY: ${{ inputs.cosmo_api_key }}
         COSMO_API_URL: ${{ inputs.cosmo_api_url }}
         COSMO_CDN_URL: ${{ inputs.cosmo_cdn_url }}
+        COSMO_WEB_URL: ${{ inputs.cosmo_web_url }}
 
     - name: Run subgraph check production
       shell: bash
@@ -47,3 +51,4 @@ runs:
         COSMO_API_KEY: ${{ inputs.cosmo_api_key }}
         COSMO_API_URL: ${{ inputs.cosmo_api_url }}
         COSMO_CDN_URL: ${{ inputs.cosmo_cdn_url }}
+        COSMO_WEB_URL: ${{ inputs.cosmo_web_url }}
