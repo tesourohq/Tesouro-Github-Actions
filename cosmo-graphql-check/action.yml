@@ -1,0 +1,49 @@
+name: Cosmo GraphQL Check
+description: Check Graphql Schema for breaking changes and visibility
+inputs:
+  cosmo_api_key:
+    description: Cosmo API Key
+    required: true
+  cosmo_api_url:
+    description: Cosmo API Url
+    required: true
+  cosmo_cdn_url:
+    description: Cosmo CDN Url
+    required: true
+  subgraph_name:
+    description: Subgraph Name
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: "lts/*"
+
+    - name: Install Cosmo CLI
+      shell: bash
+      run: |
+        npm install -g wgc@latest
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{inputs.subgraph_name}}-subgraph.graphql
+
+    - name: Run subgraph check staging
+      shell: bash
+      run: |
+        wgc subgraph check ${{inputs.subgraph_name}} --namespace staging --schema ${{inputs.subgraph_name}}-subgraph.graphql
+      env:
+        COSMO_API_KEY: ${{ inputs.cosmo_api_key }}
+        COSMO_API_URL: ${{ inputs.cosmo_api_url }}
+        COSMO_CDN_URL: ${{ inputs.cosmo_cdn_url }}
+
+    - name: Run subgraph check production
+      shell: bash
+      run: |
+        wgc subgraph check ${{inputs.subgraph_name}} --namespace production --schema ${{inputs.subgraph_name}}-subgraph.graphql
+      env:
+        COSMO_API_KEY: ${{ inputs.cosmo_api_key }}
+        COSMO_API_URL: ${{ inputs.cosmo_api_url }}
+        COSMO_CDN_URL: ${{ inputs.cosmo_cdn_url }}
