@@ -1,5 +1,5 @@
 name: Cosmo GraphQL Check
-description: Check Graphql Schema for breaking changes and visibility
+description: Check and Publish Graphql Schema for breaking changes and visibility
 inputs:
   cosmo_api_key:
     description: Cosmo API Key
