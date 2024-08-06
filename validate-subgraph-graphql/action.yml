@@ -35,8 +35,14 @@ runs:
 
     - name: Run subgraph check staging
       shell: bash
+      if: always()
       run: |
-        wgc subgraph check ${{inputs.subgraph_name}} --namespace staging --schema ${{inputs.subgraph_name}}-subgraph.graphql
+        echo '---' >> $GITHUB_STEP_SUMMARY
+        echo '### **Subgraph check against staging composition!** 🚀' >> $GITHUB_STEP_SUMMARY
+        echo '---' >> $GITHUB_STEP_SUMMARY
+        wgc subgraph check ${{inputs.subgraph_name}} --namespace staging --schema ${{inputs.subgraph_name}}-subgraph.graphql &> ${{github.workspace}}/staging-composition.logs
+        cat ${{github.workspace}}/staging-composition.logs
+        cat ${{github.workspace}}/staging-composition.logs >> $GITHUB_STEP_SUMMARY
       env:
         COSMO_API_KEY: ${{ inputs.cosmo_api_key }}
         COSMO_API_URL: ${{ inputs.cosmo_api_url }}
@@ -45,10 +51,22 @@ runs:
 
     - name: Run subgraph check production
       shell: bash
+      if: always()
       run: |
-        wgc subgraph check ${{inputs.subgraph_name}} --namespace production --schema ${{inputs.subgraph_name}}-subgraph.graphql
+        echo '---' >> $GITHUB_STEP_SUMMARY
+        echo '### **Subgraph check against production composition!** 🚀' >> $GITHUB_STEP_SUMMARY
+        echo '---' >> $GITHUB_STEP_SUMMARY
+        wgc subgraph check ${{inputs.subgraph_name}} --namespace production --schema ${{inputs.subgraph_name}}-subgraph.graphql &> ${{github.workspace}}/production-composition.logs
+        cat ${{github.workspace}}/production-composition.logs
+        cat ${{github.workspace}}/production-composition.logs >> $GITHUB_STEP_SUMMARY
       env:
         COSMO_API_KEY: ${{ inputs.cosmo_api_key }}
         COSMO_API_URL: ${{ inputs.cosmo_api_url }}
         COSMO_CDN_URL: ${{ inputs.cosmo_cdn_url }}
         COSMO_WEB_URL: ${{ inputs.cosmo_web_url }}
+
+    - name: Exit override by label
+      shell: bash
+      if: always() && ${{ ! contains(github.event.pull_request.labels.*.name, 'expected-breaking-federation-validation') && github.event_name != 'merge_group' }}
+      run: |
+        exit 0
