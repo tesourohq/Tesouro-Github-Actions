@@ -67,6 +67,6 @@ runs:
 
     - name: Exit override by label
       shell: bash
-      if: always() && ${{ ! contains(github.event.pull_request.labels.*.name, 'expected-breaking-federation-validation') && github.event_name != 'merge_group' }}
+      if: always() && contains(github.event.pull_request.labels.*.name, 'expected-breaking-federation-validation') || github.event.pull_request.labels.*.name, 'expected-breaking-graphql-validation') || github.event_name == 'merge_group' }}
       run: |
         exit 0
